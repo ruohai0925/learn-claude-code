@@ -17,7 +17,7 @@ SYSTEM = You are a coding agent at /home/yzeng/Codes/learn-claude-code. Use bash
 TOOLS  = ["bash"]
 ```
 
-**对应代码：** `__main__` 第 168-173 行
+**对应代码：** `__main__` 第 209-214 行
 
 ```python
 print(f"=== s01 verbose 模式 ===")
@@ -41,7 +41,7 @@ s01 >> What python files are in this directory?
 query = "What python files are in this directory?"
 ```
 
-**对应代码：** `__main__` 第 178-186 行
+**对应代码：** `__main__` 第 219-229 行
 
 ```python
 query = input("s01 >> ")                                # 你输入了 "What python files are in this directory?"
@@ -64,7 +64,7 @@ messages = [
 → 调用 client.messages.create(...)
 ```
 
-**对应代码：** `agent_loop` 第 130-141 行
+**对应代码：** `agent_loop` 第 171-182 行
 
 ```python
 loop_round = 1                          # 第 1 轮
@@ -107,7 +107,7 @@ response.content = [
 - `ToolUseBlock` → LLM 想调用 `bash`，命令是 `find ... -name "*.py"`
 - `id = "toolu_01Gpp..."` → 这次调用的唯一 ID，返回结果时要带上
 
-**对应代码：** `agent_loop` 第 143-152 行
+**对应代码：** `agent_loop` 第 184-193 行
 
 ```python
 print_response(response)                                            # 打印上面这段
@@ -144,7 +144,7 @@ if response.stop_reason != "tool_use":   # "tool_use" != "tool_use" → False
 → tool_result 已塞回 messages，继续下一轮...
 ```
 
-**对应代码：** `agent_loop` 第 154-165 行
+**对应代码：** `agent_loop` 第 195-206 行
 
 ```python
 results = []
@@ -236,7 +236,7 @@ response.content = [
 stop_reason = "end_turn" → 不是 "tool_use"，return!
 ```
 
-**对应代码：** `agent_loop` 第 147-152 行
+**对应代码：** `agent_loop` 第 188-193 行
 
 ```python
 messages.append({"role": "assistant", "content": response.content})
@@ -286,7 +286,7 @@ Here are the Python files found in the directory, organized by folder:
 In total, there are **20 Python files** across the project.
 ```
 
-**对应代码：** `__main__` 第 190-196 行
+**对应代码：** `__main__` 第 231-237 行
 
 ```python
 response_content = history[-1]["content"]       # 取 history 最后一条（LLM 的最终回复）

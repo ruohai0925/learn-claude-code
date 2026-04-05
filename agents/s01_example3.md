@@ -64,10 +64,14 @@ stop_reason = "end_turn" → 不是 "tool_use"，return!
 **解读：**
 
 - `stop_reason = "end_turn"` → **第 1 轮就直接结束了！**
-- `TextBlock: "4"` → LLM 不需要工具就能��答 2+2
+- `TextBlock: "4"` → LLM 不需要工具就能回答 2+2
 - 没有 `ToolUseBlock`，没有执行任何命令
 
-**对应代码：** `agent_loop` 第 147-152 行
+**LLM 背后有计算器吗？** 没有。LLM 没有调用任何工具，也没有真正"计算"。它就是一个"续写文本"的模型——训练数据里见过无数次 "2+2=4"，所以它"知道"下一个词应该是 "4"，和它知道"天空是蓝色的"一样的原理。它不是在算，而是在**回忆**。
+
+这也是为什么简单数学 LLM 都对，但复杂数学（比如 `7429 × 8361`）LLM 经常算错——它没有真正的计算能力，只是在模式匹配。如果需要精确计算，LLM 应该调用 bash 跑 `python -c "print(7429 * 8361)"` 让计算机算，而不是自己"猜"。
+
+**对应代码：** `agent_loop` 第 188-193 行
 
 ```python
 messages.append({"role": "assistant", "content": response.content})

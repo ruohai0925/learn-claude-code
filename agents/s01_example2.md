@@ -19,7 +19,7 @@ s01 >> Create hello.py that prints hello, then run it
 query = "Create hello.py that prints hello, then run it"
 ```
 
-**对应代码：** `__main__` 第 178-188 行
+**对应代码：** `__main__` 第 219-229 行
 
 ```python
 query = input("s01 >> ")
@@ -46,7 +46,7 @@ messages = [
 
 **关键观察：** messages 里有 5 条！[0]-[3] 是例 1 留下来的历史。`history` 没有清空——LLM 能看到之前所有对话。新输入追加在 [4]。
 
-**对应代码：** `agent_loop` 第 134-141 行
+**对应代码：** `agent_loop` 第 175-182 行
 
 ```python
 print_messages(messages)    # 打印快照：[0]-[3] 是例 1 的，[4] 是新输入
@@ -89,9 +89,50 @@ response.content = [
 → tool_result 已塞回 messages，继续下一轮...
 ```
 
-**解���：** `echo > file` 没有终端输出，所以 `run_bash()` 返回 `"(no output)"`。
+**解读：** `echo 'print("hello")' > hello.py` 这条命令把文字写进文件。`>` 把 stdout **重定向到文件**了——`echo` 本来会往 stdout 输出 `print("hello")`，但 `>` 把这个输出截走送进了 `hello.py`，不再经过 stdout。所以 `subprocess.run()` 捕获到的 `r.stdout` 是空的，`r.stderr` 也是空的，代码走到第 161 行 `return combined[:50000] if combined else "(no output)"`，返回 `"(no output)"`。这个字符串作为 `tool_result` 传给 LLM——LLM 看到没有报错信息，就知道文件写成功了，继续下一步。
 
-**对应代码：** `agent_loop` 第 154-165 行
+对比后面轮次 2 执行的 `python hello.py`——没有 `>` 重定向，`print("hello")` 的结果正常走 stdout，`r.stdout` 就是 `"hello"`。同样一个 `run_bash()`，有没有 `>` 决定了 stdout 是空还是有内容。
+
+**补充：stdout 和 stderr 是什么？**
+
+每个终端命令运行时，有两条独立的输出通道：
+
+| 通道 | 全称 | 用途 | 举例 |
+|---|---|---|---|
+| stdout | standard output（标准输出） | 命令的**正常结果** | `ls` 列出的文件列表、`cat` 打印的文件内容 |
+| stderr | standard error（标准错误） | **错误和警告**信息 | `python: No such file`、编译报错、权限不足 |
+
+为什么要分两条？因为你可能想只保存结果、忽略错误（或反过来）。比如：
+
+```bash
+python app.py > output.txt      # stdout 写进文件，stderr 仍然打印到终端
+python app.py 2> errors.txt     # stderr 写进文件，stdout 仍然打印到终端
+```
+
+在 `run_bash()` 里（第 146-147 行），`capture_output=True` 让 `subprocess` 分别捕获两条通道：
+
+```python
+r = subprocess.run(command, shell=True, capture_output=True, text=True, ...)
+r.stdout    # "hello"              ← 正常输出
+r.stderr    # ""                   ← 没有错误
+```
+
+然后第 152-159 行把它们合并，一起传给 LLM：
+
+```python
+out = r.stdout.strip()
+err = r.stderr.strip()
+if out and err:
+    combined = f"{out}\n[stderr]\n{err}"    # 两个都有 → 合并，用 [stderr] 标记
+elif err:
+    combined = f"[stderr]\n{err}"           # 只有错误 → 标记后传给 LLM
+else:
+    combined = out                          # 只有正常输出（最常见的情况）
+```
+
+为什么要合并给 LLM？因为 LLM 需要**同时看到结果和错误**才能判断下一步。比如编译一个文件，stdout 可能是空的，但 stderr 里有报错信息——LLM 看到后就知道要修 bug。
+
+**对应代码：** `agent_loop` 第 195-206 行
 
 ```python
 output = run_bash(block.input["command"])     # 执行 echo ... > hello.py
@@ -183,7 +224,17 @@ stop_reason = "end_turn" → 不是 "tool_use"，return!
 
 **解读：** LLM 看到 `hello.py` 输出了 `hello`，确认两步都完成了，`stop_reason = "end_turn"`。
 
-**对应代码：** `agent_loop` 第 149-152 行
+**注意 TextBlock 里的格式：** `` `hello.py` ``、`"hello"`、`**hello**`——为什么混用？
+
+| 标记 | 含义 | 例子 |
+|---|---|---|
+| `` `hello.py` `` | 反引号 = 代码/文件名 | 这是一个文件名 |
+| `"hello"` | 双引号 = 字符串字面值 | Python 代码里的字符串 |
+| `**hello**` | 双星号 = 加粗强调 | 强调运行输出的关键结果 |
+
+这些格式全是 LLM 自己选的 Markdown 排版，你的代码里没有任何地方控制这些。`TextBlock` 的内容完全由 LLM 生成，就像你在 ChatGPT 里看到的回复一样。换一个模型、换一次运行，措辞和格式可能完全不同。唯一不变的是外层结构（`TextBlock`、`ToolUseBlock`、`stop_reason`），因为那是 API 协议规定的。
+
+**对应代码：** `agent_loop` 第 190-193 行
 
 ```python
 if response.stop_reason != "tool_use":    # "end_turn" != "tool_use" → True!
