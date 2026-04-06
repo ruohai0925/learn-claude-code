@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>s04 Example 2 - Read All .py Files (Rate Limit Crash)</title>
+<style>
+  body {
+    background: #1e1e1e; color: #d4d4d4;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 13px; padding: 24px; line-height: 1.6;
+    max-width: 1200px; margin: 0 auto;
+  }
+  pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; }
+  .bold { font-weight: bold; }
+  .dim { opacity: 0.6; }
+  .red { color: #f44747; }
+  .green { color: #4ec94e; }
+  .yellow { color: #e5c07b; }
+  .magenta { color: #c678dd; }
+  .cyan { color: #56b6c2; }
+  .separator { color: #c678dd; }
+  .prompt { color: #56b6c2; }
+  .tool-exec { color: #e5c07b; }
+  .response { color: #4ec94e; }
+  .error { color: #f44747; }
+</style>
+</head>
+<body>
+<pre><span class="prompt">(learncc) yzeng@USLT751:~/Codes/learn-claude-code$ python agents/s04_subagent.py</span>
+<span class="bold">=== s04 verbose 模式 ===</span>
+<span class="dim">MODEL  = claude-sonnet-4-6</span>
+<span class="dim">SYSTEM (父) = You are a coding agent at /home/yzeng/Codes/learn-claude-code. Use the task tool to delegate exploration or subtasks.</span>
+<span class="dim">SYSTEM (子) = You are a coding subagent at /home/yzeng/Codes/learn-claude-code. Complete the given task, then summarize your findings.</span>
+<span class="dim">PARENT_TOOLS = [&quot;bash&quot;, &quot;read_file&quot;, &quot;write_file&quot;, &quot;edit_file&quot;, &quot;task&quot;]</span>
+<span class="dim">CHILD_TOOLS  = [&quot;bash&quot;, &quot;read_file&quot;, &quot;write_file&quot;, &quot;edit_file&quot;]  ← 没有 task</span>
+
+<span class="prompt">s04 &gt;&gt; Delegate: read all .py files and summarize what each one does</span>
+
+<span class="separator">────────────────── 用户输入 ──────────────────</span>
+query = &quot;Delegate: read all .py files and summarize what each one does&quot;
+
+<span class="separator">────────────────── 父 Agent 轮次 1 ──────────────────</span>
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;Delegate: read all .py files and summarize what each one does&quot;</span>
+<span class="dim">]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 父 Agent 轮次 1: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  ToolUseBlock: name=&quot;task&quot;, id=&quot;toolu_01JsaWNHs93yMG7VV7zv8iCv&quot;</span>
+<span class="response">    input={&quot;description&quot;: &quot;Read all .py files and summarize each one&quot;, &quot;prompt&quot;: &quot;Go to /home/yzeng/Codes/learn-claude-code and find all .py files. Read each one and provide a summary of what each file does. Be...</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 父 Agent 轮次 1: 执行工具 ──────────────────</span>
+<span class="tool-exec">派发子任务: &quot;Read all .py files and summarize each one&quot;</span>
+<span class="dim">prompt: &quot;Go to /home/yzeng/Codes/learn-claude-code and find all .py files. Read each one and provide a summary of what each file &quot;</span>
+<span class="separator">──────────────────────────────────────────────────</span>
+
+  │ <span class="separator">────────────────── 子 Agent 启动 ──────────────────</span>
+  │ <span class="cyan">prompt: &quot;Go to /home/yzeng/Codes/learn-claude-code and find all .py files. Read each one and provide a summary of what each file &quot;</span>
+  │ <span class="dim">tools: [&quot;bash&quot;, &quot;read_file&quot;, &quot;write_file&quot;, &quot;edit_file&quot;]  (没有 task！)</span>
+
+  │ <span class="separator">────────────────── 子 Agent 轮次 1 ──────────────────</span>
+  │ <span class="dim">messages = [</span>
+  │ <span class="dim">  [0] user: &quot;Go to /home/yzeng/Codes/learn-claude-code and find all .py files. Read each one ...&quot;</span>
+  │ <span class="dim">]</span>
+  │ <span class="cyan">→ 调用 client.messages.create(...)</span>
+
+  │ <span class="separator">────────────────── 子 Agent 轮次 1: 回复 ──────────────────</span>
+  │ <span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+  │ <span class="response">response.content = [</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;bash&quot;, id=&quot;toolu_01LivU9u1bZhAEQ5DyshTynu&quot;</span>
+  │ <span class="response">    input={&quot;command&quot;: &quot;find /home/yzeng/Codes/learn-claude-code -name \&quot;*.py\&quot; -type f&quot;}</span>
+  │ <span class="response">]</span>
+
+  │ <span class="separator">────────────────── 子 Agent 轮次 1: 执行工具 ──────────────────</span>
+  │ <span class="tool-exec">执行: bash({&quot;command&quot;: &quot;find /home/yzeng/Codes/learn-claude-code -name \&quot;*.py\&quot; -type f&quot;})</span>
+  │ <span class="dim">输出 (1776 字符): /home/yzeng/Codes/learn-claude-code/agents/s10_team_protocols.py
+/home/yzeng/Codes/learn-claude-code/agents/s12_worktree_task_isolation.py
+/home/yzeng/Codes/learn-claude-code/agents/s05_skill_loading.</span>
+
+  │ <span class="separator">────────────────── 子 Agent 轮次 2 ──────────────────</span>
+  │ <span class="dim">messages = [</span>
+  │ <span class="dim">  [0] user: &quot;Go to /home/yzeng/Codes/learn-claude-code and find all .py files. Read each one ...&quot;</span>
+  │ <span class="dim">  [1] assistant/tool_use: bash({&quot;command&quot;: &quot;find /home/yzeng/Codes/learn-claude-code -name \&quot;*.py\&quot; -type f&quot;})</span>
+  │ <span class="dim">  [2] user/tool_result: &quot;/home/yzeng/Codes/learn-claude-code/agents/s10_team_protocols.py
+/home/yzeng/Cod...&quot;</span>
+  │ <span class="dim">]</span>
+  │ <span class="cyan">→ 调用 client.messages.create(...)</span>
+
+  │ <span class="separator">────────────────── 子 Agent 轮次 2: 回复 ──────────────────</span>
+  │ <span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+  │ <span class="response">response.content = [</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/s10_team_protocols.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/s12_worktree_task_isolation.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/s05_skill_loading.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/s_full.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/s03_todo_write.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/s02_tool_use.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/s09_agent_teams.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/s06_context_compact.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/__init__.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/s08_background_tasks.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/s04_subagent.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/s11_autonomous_agents.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/s01_agent_loop.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → agents/s07_task_system.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → tests/test_agents_smoke.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → tests/test_s_full_background.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → skills/agent-builder/scripts/init_agent.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → skills/agent-builder/references/minimal-agent.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → skills/agent-builder/references/subagent-pattern.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → skills/agent-builder/references/tool-templates.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → examples/s03/tests/test_utils.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → examples/s03/utils.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → examples/s03/hello.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → examples/s02/greet.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → examples/ansi_to_html.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → examples/s03/__init__.py</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot; → examples/s03/tests/__init__.py</span>
+  │ <span class="response">]</span>
+
+  │ <span class="separator">────────────────── 子 Agent 轮次 2: 执行工具 ──────────────────</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/s10_team_protocols.py&quot;})</span>
+  │ <span class="dim">输出 (21028 字符): #!/usr/bin/env python3
+# Harness: protocols -- structured handshakes between models.
+&quot;&quot;&quot;
+s10_team_protocols.py - Team Protocols
+
+Shutdown protocol and plan approval protocol, both using the same
+reque</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/s12_worktree_task_isolation.py&quot;})</span>
+  │ <span class="dim">输出 (25882 字符): #!/usr/bin/env python3
+# Harness: directory isolation -- parallel execution lanes that never collide.
+&quot;&quot;&quot;
+s12_worktree_task_isolation.py - Worktree + Task Isolation
+
+Directory-level isolation for para</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/s05_skill_loading.py&quot;})</span>
+  │ <span class="dim">输出 (8523 字符): #!/usr/bin/env python3
+# Harness: on-demand knowledge -- domain expertise, loaded when the model asks.
+&quot;&quot;&quot;
+s05_skill_loading.py - Skills
+
+Two-layer skill injection that avoids bloating the system prom</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/s_full.py&quot;})</span>
+  │ <span class="dim">输出 (<span class="yellow">36454 字符</span>): #!/usr/bin/env python3
+# Harness: all mechanisms combined -- the complete cockpit for the model.
+&quot;&quot;&quot;
+s_full.py - Full Reference Agent
+
+Capstone implementation combining every mechanism from s01-s11.
+S</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/s03_todo_write.py&quot;})</span>
+  │ <span class="dim">输出 (15164 字符): #!/usr/bin/env python3 ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/s02_tool_use.py&quot;})</span>
+  │ <span class="dim">输出 (11548 字符): #!/usr/bin/env python3 ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/s09_agent_teams.py&quot;})</span>
+  │ <span class="dim">输出 (16835 字符): #!/usr/bin/env python3 ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/s06_context_compact.py&quot;})</span>
+  │ <span class="dim">输出 (10144 字符): #!/usr/bin/env python3 ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/__init__.py&quot;})</span>
+  │ <span class="dim">输出 (202 字符): # agents/ - Harness implementations ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/s08_background_tasks.py&quot;})</span>
+  │ <span class="dim">输出 (9349 字符): #!/usr/bin/env python3 ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/s04_subagent.py&quot;})</span>
+  │ <span class="dim">输出 (14213 字符): #!/usr/bin/env python3 ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/s11_autonomous_agents.py&quot;})</span>
+  │ <span class="dim">输出 (25021 字符): #!/usr/bin/env python3 ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/s01_agent_loop.py&quot;})</span>
+  │ <span class="dim">输出 (8924 字符): #!/usr/bin/env python3 ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../agents/s07_task_system.py&quot;})</span>
+  │ <span class="dim">输出 (10108 字符): #!/usr/bin/env python3 ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../tests/test_agents_smoke.py&quot;})</span>
+  │ <span class="dim">输出 (602 字符): from __future__ import annotations ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../tests/test_s_full_background.py&quot;})</span>
+  │ <span class="dim">输出 (2133 字符): import importlib.util ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../skills/agent-builder/scripts/init_agent.py&quot;})</span>
+  │ <span class="dim">输出 (9932 字符): #!/usr/bin/env python3 ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../skills/agent-builder/references/minimal-agent.py&quot;})</span>
+  │ <span class="dim">输出 (4147 字符): #!/usr/bin/env python3 ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../skills/agent-builder/references/subagent-pattern.py&quot;})</span>
+  │ <span class="dim">输出 (7772 字符): &quot;&quot;&quot;Subagent Pattern ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../skills/agent-builder/references/tool-templates.py&quot;})</span>
+  │ <span class="dim">输出 (7880 字符): &quot;&quot;&quot;Tool Templates ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../examples/s03/tests/test_utils.py&quot;})</span>
+  │ <span class="dim">输出 (4461 字符): &quot;&quot;&quot;tests/test_utils.py ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../examples/s03/utils.py&quot;})</span>
+  │ <span class="dim">输出 (3766 字符): &quot;&quot;&quot;utils.py ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../examples/s03/hello.py&quot;})</span>
+  │ <span class="dim">输出 (307 字符): def greet(name: str = &quot;World&quot;) ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../examples/s02/greet.py&quot;})</span>
+  │ <span class="dim">输出 (317 字符): def greet(name) ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../examples/ansi_to_html.py&quot;})</span>
+  │ <span class="dim">输出 (2213 字符): #!/usr/bin/env python3 ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../examples/s03/__init__.py&quot;})</span>
+  │ <span class="dim">输出 (318 字符): &quot;&quot;&quot;learn-claude-code ...</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;.../examples/s03/tests/__init__.py&quot;})</span>
+  │ <span class="dim">输出 (0 字符):</span>
+
+  │ <span class="separator">────────────────── 子 Agent 轮次 3 ──────────────────</span>
+  │ <span class="dim">messages = [</span>
+  │ <span class="dim">  [0] user: &quot;Go to /home/yzeng/Codes/learn-claude-code and find all .py files. Read each one ...&quot;</span>
+  │ <span class="dim">  [1] assistant/tool_use: bash({&quot;command&quot;: &quot;find ... -name \&quot;*.py\&quot; -type f&quot;})</span>
+  │ <span class="dim">  [2] user/tool_result: &quot;/home/yzeng/Codes/learn-claude-code/agents/s10_team_protocols.py
+/home/yzeng/Cod...&quot;</span>
+  │ <span class="dim">  [3] assistant/tool_use: read_file × 27  ← 27 个并行读取！</span>
+  │ <span class="dim">  [4] user/tool_result: × 27  ← 27 个文件内容，~250,000 字符！</span>
+  │ <span class="dim">]</span>
+  │ <span class="cyan">→ 调用 client.messages.create(...)</span>
+
+  │ <span class="separator">────────────────── 子 Agent 轮次 3: 回复 ──────────────────</span>
+  │ <span class="response">response.stop_reason = &quot;end_turn&quot;</span>
+  │ <span class="response">response.content = [</span>
+  │ <span class="response">  TextBlock: &quot;Here is a summary of all 27 `.py` files found in the project:
+
+---
+
+## agents/ — Core Agent Harness Implementations
+...&quot;</span>
+  │ <span class="response">]</span>
+
+  │ <span class="separator">────────────────── 子 Agent 结束 ──────────────────</span>
+  │ <span class="bold">共 3 轮，子 Agent messages 有 6 条 → 全部丢弃</span>
+  │ <span class="bold">只返回摘要 (6407 字符):</span>
+  │ Here is a summary of all 27 `.py` files found in the project:
+
+---
+
+## agents/ — Core Agent Harness Implementations
+
+| File | Summary |
+|---|---|
+| `__init__.py` | Package docstring only — declares `agents/` as a collection of self-contained, runnable harness files. |
+| **`s01_agent_loop.py`** |...
+<span class="separator">──────────────────────────────────────────────────</span>
+<span class="tool-exec">子任务完成，摘要返回给父 Agent (6407 字符)</span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── 父 Agent 轮次 2 ──────────────────</span>
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;Delegate: read all .py files and summarize what each one does&quot;</span>
+<span class="dim">  [1] assistant/tool_use: task({&quot;description&quot;: &quot;Read all .py files and summarize each one&quot;, &quot;prompt&quot;: &quot;Go to /h)</span>
+<span class="dim">  [2] user/tool_result: &quot;Here is a summary of all 27 `.py` files found in the project:
+
+---
+
+## agents...&quot;</span>
+<span class="dim">]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+<span class="error">Traceback (most recent call last):
+  File &quot;/home/yzeng/Codes/learn-claude-code/agents/s04_subagent.py&quot;, line 357, in &lt;module&gt;
+    agent_loop(history)
+    ~~~~~~~~~~^^^^^^^^^
+  File &quot;/home/yzeng/Codes/learn-claude-code/agents/s04_subagent.py&quot;, line 295, in agent_loop
+    response = client.messages.create(
+        model=MODEL, system=SYSTEM, messages=messages,
+        tools=PARENT_TOOLS, max_tokens=8000,
+    )
+  File &quot;.../anthropic/_utils/_utils.py&quot;, line 282, in wrapper
+    return func(*args, **kwargs)
+  File &quot;.../anthropic/resources/messages/messages.py&quot;, line 996, in create
+    return self._post(
+           ~~~~~~~~~~^
+        &quot;/v1/messages&quot;,
+        ^^^^^^^^^^^^^^^
+    ...
+    )
+    ^
+  File &quot;.../anthropic/_base_client.py&quot;, line 1370, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File &quot;.../anthropic/_base_client.py&quot;, line 1143, in request
+    raise self._make_status_error_from_response(err.response) from None
+<span class="bold">anthropic.RateLimitError: Error code: 429</span> - {&#x27;type&#x27;: &#x27;error&#x27;, &#x27;error&#x27;: {&#x27;type&#x27;: &#x27;rate_limit_error&#x27;,
+&#x27;message&#x27;: &quot;This request would exceed your organization&#x27;s rate limit of <span class="bold">30,000 input tokens per minute</span>
+(org: 2af06055-..., model: claude-sonnet-4-6).
+For details, refer to: https://docs.claude.com/en/api/rate-limits.
+You can see the response headers for current usage.
+Please reduce the prompt length or the maximum tokens requested, or try again later.
+You may also contact sales at https://claude.com/contact-sales to discuss your options for a rate limit increase.&quot;}}</span>
+<span class="prompt">(learncc) yzeng@USLT751:~/Codes/learn-claude-code$</span></pre>
+</body>
+</html>

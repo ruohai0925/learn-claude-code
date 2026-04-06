@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>s04 Example 1 - Subagent Finds Testing Framework</title>
+<style>
+  body {
+    background: #1e1e1e; color: #d4d4d4;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 13px; padding: 24px; line-height: 1.6;
+    max-width: 1200px; margin: 0 auto;
+  }
+  pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; }
+  .bold { font-weight: bold; }
+  .dim { opacity: 0.6; }
+  .red { color: #f44747; }
+  .green { color: #4ec94e; }
+  .yellow { color: #e5c07b; }
+  .magenta { color: #c678dd; }
+  .cyan { color: #56b6c2; }
+  .separator { color: #c678dd; }
+  .prompt { color: #56b6c2; }
+  .tool-exec { color: #e5c07b; }
+  .response { color: #4ec94e; }
+  .sub { color: #d4d4d4; }
+  .sub-separator { color: #c678dd; }
+</style>
+</head>
+<body>
+<pre><span class="prompt">(learncc) yzeng@USLT751:~/Codes/learn-claude-code$ python agents/s04_subagent.py</span>
+<span class="bold">=== s04 verbose 模式 ===</span>
+<span class="dim">MODEL  = claude-sonnet-4-6</span>
+<span class="dim">SYSTEM (父) = You are a coding agent at /home/yzeng/Codes/learn-claude-code. Use the task tool to delegate exploration or subtasks.</span>
+<span class="dim">SYSTEM (子) = You are a coding subagent at /home/yzeng/Codes/learn-claude-code. Complete the given task, then summarize your findings.</span>
+<span class="dim">PARENT_TOOLS = [&quot;bash&quot;, &quot;read_file&quot;, &quot;write_file&quot;, &quot;edit_file&quot;, &quot;task&quot;]</span>
+<span class="dim">CHILD_TOOLS  = [&quot;bash&quot;, &quot;read_file&quot;, &quot;write_file&quot;, &quot;edit_file&quot;]  ← 没有 task</span>
+
+<span class="prompt">s04 &gt;&gt; Use a subtask to find what testing framework this project uses</span>
+
+<span class="separator">────────────────── 用户输入 ──────────────────</span>
+query = &quot;Use a subtask to find what testing framework this project uses&quot;
+
+<span class="separator">────────────────── 父 Agent 轮次 1 ──────────────────</span>
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;Use a subtask to find what testing framework this project uses&quot;</span>
+<span class="dim">]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 父 Agent 轮次 1: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  ToolUseBlock: name=&quot;task&quot;, id=&quot;toolu_019f46QJo4giwp4pRTXAgBhp&quot;</span>
+<span class="response">    input={&quot;description&quot;: &quot;Find the testing framework used in this project&quot;, &quot;prompt&quot;: &quot;Explore the project at /home/yzeng/Codes/learn-claude-code and determine what testing framework it uses. Look at package.j...</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 父 Agent 轮次 1: 执行工具 ──────────────────</span>
+<span class="tool-exec">派发子任务: &quot;Find the testing framework used in this project&quot;</span>
+<span class="dim">prompt: &quot;Explore the project at /home/yzeng/Codes/learn-claude-code and determine what testing framework it uses. Look at package&quot;</span>
+<span class="separator">──────────────────────────────────────────────────</span>
+
+  │ <span class="sub-separator">────────────────── 子 Agent 启动 ──────────────────</span>
+  │ <span class="cyan">prompt: &quot;Explore the project at /home/yzeng/Codes/learn-claude-code and determine what testing framework it uses. Look at package&quot;</span>
+  │ <span class="dim">tools: [&quot;bash&quot;, &quot;read_file&quot;, &quot;write_file&quot;, &quot;edit_file&quot;]  (没有 task！)</span>
+
+  │ <span class="sub-separator">────────────────── 子 Agent 轮次 1 ──────────────────</span>
+  │ <span class="dim">messages = [</span>
+  │ <span class="dim">  [0] user: &quot;Explore the project at /home/yzeng/Codes/learn-claude-code and determine what te...&quot;</span>
+  │ <span class="dim">]</span>
+  │ <span class="cyan">→ 调用 client.messages.create(...)</span>
+
+  │ <span class="sub-separator">────────────────── 子 Agent 轮次 1: 回复 ──────────────────</span>
+  │ <span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+  │ <span class="response">response.content = [</span>
+  │ <span class="response">  TextBlock: &quot;I'll explore the project structure to identify the testing framework. Let me look at multiple files simultaneously.&quot;</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;bash&quot;, id=&quot;toolu_0136M3RiZstJXJeGxikPGm47&quot;</span>
+  │ <span class="response">    input={&quot;command&quot;: &quot;find /home/yzeng/Codes/learn-claude-code -maxdepth 3 -type f | sort&quot;}</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot;, id=&quot;toolu_01RMmJwbUiMVQSJs6K8J65pX&quot;</span>
+  │ <span class="response">    input={&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code&quot;}</span>
+  │ <span class="response">]</span>
+
+  │ <span class="sub-separator">────────────────── 子 Agent 轮次 1: 执行工具 ──────────────────</span>
+  │ <span class="tool-exec">执行: bash({&quot;command&quot;: &quot;find /home/yzeng/Codes/learn-claude-code -maxdepth 3 -type f | sort&quot;})</span>
+  │ <span class="dim">输出 (7524 字符): /home/yzeng/Codes/learn-claude-code/.env
+/home/yzeng/Codes/learn-claude-code/.env.example
+/home/yzeng/Codes/learn-claude-code/.git/COMMIT_EDITMSG
+/home/yzeng/Codes/learn-claude-code/.git/HEAD
+/home/yz</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code&quot;})</span>
+  │ <span class="dim">输出 (71 字符): <span class="red">Error: [Errno 21] Is a directory: '/home/yzeng/Codes/learn-claude-code'</span></span>
+
+  │ <span class="sub-separator">────────────────── 子 Agent 轮次 2 ──────────────────</span>
+  │ <span class="dim">messages = [</span>
+  │ <span class="dim">  [0] user: &quot;Explore the project at /home/yzeng/Codes/learn-claude-code and determine what te...&quot;</span>
+  │ <span class="dim">  [1] assistant/text: &quot;I'll explore the project structure to identify the testing framework. Let me loo...&quot;</span>
+  │ <span class="dim">  [1] assistant/tool_use: bash({&quot;command&quot;: &quot;find /home/yzeng/Codes/learn-claude-code -maxdepth 3 -type f | sort)</span>
+  │ <span class="dim">  [1] assistant/tool_use: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code&quot;})</span>
+  │ <span class="dim">  [2] user/tool_result: &quot;/home/yzeng/Codes/learn-claude-code/.env
+/home/yzeng/Codes/learn-claude-code/.en...&quot;</span>
+  │ <span class="dim">  [2] user/tool_result: &quot;Error: [Errno 21] Is a directory: '/home/yzeng/Codes/learn-claude-code'&quot;</span>
+  │ <span class="dim">]</span>
+  │ <span class="cyan">→ 调用 client.messages.create(...)</span>
+
+  │ <span class="sub-separator">────────────────── 子 Agent 轮次 2: 回复 ──────────────────</span>
+  │ <span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+  │ <span class="response">response.content = [</span>
+  │ <span class="response">  TextBlock: &quot;Now let me read the key files in parallel — `requirements.txt`, the test files, the CI workflow, and the web `package.js...&quot;</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot;, id=&quot;toolu_01B1EfRuPvMLtVGSca9ECojP&quot;</span>
+  │ <span class="response">    input={&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/requirements.txt&quot;}</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot;, id=&quot;toolu_0154P8pWFBB3jDyugZd5km75&quot;</span>
+  │ <span class="response">    input={&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/tests/test_agents_smoke.py&quot;}</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot;, id=&quot;toolu_01SnJHJkASLGzqcoUYaQfRMu&quot;</span>
+  │ <span class="response">    input={&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/tests/test_s_full_background.py&quot;}</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot;, id=&quot;toolu_01E8V6snaQYdaDB3rsztrBU3&quot;</span>
+  │ <span class="response">    input={&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/.github/workflows/ci.yml&quot;}</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot;, id=&quot;toolu_01HYvPPeRpcY7hW4e8k7u5sK&quot;</span>
+  │ <span class="response">    input={&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/.github/workflows/test.yml&quot;}</span>
+  │ <span class="response">  ToolUseBlock: name=&quot;read_file&quot;, id=&quot;toolu_01AcqiUfcS5VJu2zfjceY6K5&quot;</span>
+  │ <span class="response">    input={&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/web/package.json&quot;}</span>
+  │ <span class="response">]</span>
+
+  │ <span class="sub-separator">────────────────── 子 Agent 轮次 2: 执行工具 ──────────────────</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/requirements.txt&quot;})</span>
+  │ <span class="dim">输出 (50 字符): anthropic&gt;=0.25.0
+python-dotenv&gt;=1.0.0
+pyyaml&gt;=6.0</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/tests/test_agents_smoke.py&quot;})</span>
+  │ <span class="dim">输出 (602 字符): from __future__ import annotations
+
+from pathlib import Path
+import py_compile
+
+import pytest
+
+
+ROOT = Path(__file__).resolve().parents[1]
+AGENTS_DIR = ROOT / &quot;agents&quot;
+AGENT_FILES = sorted(
+    path f</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/tests/test_s_full_background.py&quot;})</span>
+  │ <span class="dim">输出 (2133 字符): import importlib.util
+import os
+import sys
+import tempfile
+import types
+import unittest
+from pathlib import Path
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+MODULE_PATH = REPO_ROOT / &quot;agents&quot; /</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/.github/workflows/ci.yml&quot;})</span>
+  │ <span class="dim">输出 (538 字符): name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - u</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/.github/workflows/test.yml&quot;})</span>
+  │ <span class="dim">输出 (913 字符): name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  python-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up P</span>
+  │ <span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/web/package.json&quot;})</span>
+  │ <span class="dim">输出 (915 字符): {
+  &quot;name&quot;: &quot;web&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;private&quot;: true,
+  &quot;scripts&quot;: {
+    &quot;extract&quot;: &quot;tsx scripts/extract-content.ts&quot;,
+    &quot;predev&quot;: &quot;npm run extract&quot;,
+    &quot;dev&quot;: &quot;next dev&quot;,
+    &quot;prebuild&quot;: &quot;npm</span>
+
+  │ <span class="sub-separator">────────────────── 子 Agent 轮次 3 ──────────────────</span>
+  │ <span class="dim">messages = [</span>
+  │ <span class="dim">  [0] user: &quot;Explore the project at /home/yzeng/Codes/learn-claude-code and determine what te...&quot;</span>
+  │ <span class="dim">  [1] assistant/text: &quot;I'll explore the project structure to identify the testing framework. Let me loo...&quot;</span>
+  │ <span class="dim">  [1] assistant/tool_use: bash({&quot;command&quot;: &quot;find /home/yzeng/Codes/learn-claude-code -maxdepth 3 -type f | sort)</span>
+  │ <span class="dim">  [1] assistant/tool_use: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code&quot;})</span>
+  │ <span class="dim">  [2] user/tool_result: &quot;/home/yzeng/Codes/learn-claude-code/.env
+/home/yzeng/Codes/learn-claude-code/.en...&quot;</span>
+  │ <span class="dim">  [2] user/tool_result: &quot;Error: [Errno 21] Is a directory: '/home/yzeng/Codes/learn-claude-code'&quot;</span>
+  │ <span class="dim">  [3] assistant/text: &quot;Now let me read the key files in parallel — `requirements.txt`, the test files, ...&quot;</span>
+  │ <span class="dim">  [3] assistant/tool_use: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/requirements.txt&quot;})</span>
+  │ <span class="dim">  [3] assistant/tool_use: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/tests/test_agents_smoke.py&quot;})</span>
+  │ <span class="dim">  [3] assistant/tool_use: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/tests/test_s_full_background.py&quot;})</span>
+  │ <span class="dim">  [3] assistant/tool_use: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/.github/workflows/ci.yml&quot;})</span>
+  │ <span class="dim">  [3] assistant/tool_use: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/.github/workflows/test.yml&quot;})</span>
+  │ <span class="dim">  [3] assistant/tool_use: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/web/package.json&quot;})</span>
+  │ <span class="dim">  [4] user/tool_result: &quot;anthropic&gt;=0.25.0
+python-dotenv&gt;=1.0.0
+pyyaml&gt;=6.0&quot;</span>
+  │ <span class="dim">  [4] user/tool_result: &quot;from __future__ import annotations
+
+from pathlib import Path
+import py_compile
+
+...&quot;</span>
+  │ <span class="dim">  [4] user/tool_result: &quot;import importlib.util
+import os
+import sys
+import tempfile
+import types
+import u...&quot;</span>
+  │ <span class="dim">  [4] user/tool_result: &quot;name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+...&quot;</span>
+  │ <span class="dim">  [4] user/tool_result: &quot;name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main...&quot;</span>
+  │ <span class="dim">  [4] user/tool_result: &quot;{
+  &quot;name&quot;: &quot;web&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;private&quot;: true,
+  &quot;scripts&quot;: {
+    &quot;...&quot;</span>
+  │ <span class="dim">]</span>
+  │ <span class="cyan">→ 调用 client.messages.create(...)</span>
+
+  │ <span class="sub-separator">────────────────── 子 Agent 轮次 3: 回复 ──────────────────</span>
+  │ <span class="response">response.stop_reason = &quot;end_turn&quot;</span>
+  │ <span class="response">response.content = [</span>
+  │ <span class="response">  TextBlock: &quot;Here is a complete picture of everything found:
+
+---
+
+## Testing Framework Analysis
+
+The project uses **two different te...&quot;</span>
+  │ <span class="response">]</span>
+
+  │ <span class="sub-separator">────────────────── 子 Agent 结束 ──────────────────</span>
+  │ <span class="bold">共 3 轮，子 Agent messages 有 6 条 → 全部丢弃</span>
+  │ <span class="bold">只返回摘要 (2151 字符):</span>
+  │ Here is a complete picture of everything found:
+
+---
+
+## Testing Framework Analysis
+
+The project uses **two different testing frameworks**, one for each layer of the codebase:
+
+---
+
+### 1. Python Tests → **pytest** (primary) + **unittest** (secondary)
+
+| Aspect | Detail |
+|---|---|
+| **Primary fra...
+<span class="separator">──────────────────────────────────────────────────</span>
+<span class="tool-exec">子任务完成，摘要返回给父 Agent (2151 字符)</span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── 父 Agent 轮次 2 ──────────────────</span>
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;Use a subtask to find what testing framework this project uses&quot;</span>
+<span class="dim">  [1] assistant/tool_use: task({&quot;description&quot;: &quot;Find the testing framework used in this project&quot;, &quot;prompt&quot;: &quot;Ex)</span>
+<span class="dim">  [2] user/tool_result: &quot;Here is a complete picture of everything found:
+
+---
+
+## Testing Framework Analy...&quot;</span>
+<span class="dim">]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 父 Agent 轮次 2: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;end_turn&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;The project uses **pytest** as its primary testing framework (with some tests written in **unittest** style, which pytes...&quot;</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 父 Agent 轮次 2: 循环结束 ──────────────────</span>
+<span class="bold">stop_reason = &quot;end_turn&quot; → return!</span>
+
+<span class="separator">────────────────── 最终回答 ──────────────────</span>
+The project uses <span class="bold">**pytest**</span> as its primary testing framework (with some tests written in <span class="bold">**unittest**</span> style, which pytest also runs seamlessly).
+
+Here's a quick summary of the findings:
+
+- <span class="bold">Python tests</span> → <span class="cyan">pytest</span>, located in the <span class="dim">tests/</span> directory
+  - <span class="dim">test_agents_smoke.py</span> uses pytest-native features like <span class="dim">@pytest.mark.parametrize</span>
+  - <span class="dim">test_s_full_background.py</span> uses <span class="dim">unittest.TestCase</span> style, but is still executed by pytest
+  - Tests are run via: <span class="dim">python -m pytest tests/test_agents_smoke.py -q</span>
+  - The CI pipeline (<span class="dim">.github/workflows/test.yml</span>) installs pytest explicitly
+
+- <span class="bold">Web frontend (Next.js)</span> → No testing framework is configured; CI only runs TypeScript type-checking and a production build.
+
+<span class="prompt">s04 &gt;&gt;</span></pre>
+</body>
+</html>
