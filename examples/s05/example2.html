@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>s05 Example 2 - Load Agent Builder Skill</title>
+<style>
+  body {
+    background: #1e1e1e; color: #d4d4d4;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 13px; padding: 24px; line-height: 1.6;
+    max-width: 1200px; margin: 0 auto;
+  }
+  pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; }
+  .bold { font-weight: bold; }
+  .dim { opacity: 0.6; }
+  .red { color: #f44747; }
+  .green { color: #4ec94e; }
+  .yellow { color: #e5c07b; }
+  .magenta { color: #c678dd; }
+  .cyan { color: #56b6c2; }
+  .separator { color: #c678dd; }
+  .prompt { color: #56b6c2; }
+  .tool-exec { color: #e5c07b; }
+  .response { color: #4ec94e; }
+</style>
+</head>
+<body>
+<pre><span class="prompt">s05 &gt;&gt; Load the agent-builder skill and follow its instructions</span>
+
+<span class="separator">────────────────── 用户输入 ──────────────────</span>
+query = &quot;Load the agent-builder skill and follow its instructions&quot;
+
+<span class="separator">────────────────── 轮次 1 ──────────────────</span>
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;What skills are available?&quot;</span>
+<span class="dim">  [1] assistant/text: &quot;Based on my system configuration, here are the **4 skills** currently available:...&quot;</span>
+<span class="dim">  [2] user: &quot;Load the agent-builder skill and follow its instructions&quot;</span>
+<span class="dim">]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 1: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  ToolUseBlock: name=&quot;load_skill&quot;, id=&quot;toolu_015omWJRTRYRkVTcR343aogG&quot;</span>
+<span class="response">    input={&quot;name&quot;: &quot;agent-builder&quot;}</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 1: 执行工具 ──────────────────</span>
+<span class="yellow">加载 skill: &quot;agent-builder&quot;</span>
+<span class="dim">返回内容 (4176 字符):</span>
+<span class="dim">&lt;skill name=&quot;agent-builder&quot;&gt;
+# Agent Builder
+
+Build AI agents for any domain - customer service, research, operations...
+
+## The Core Philosophy
+
+&gt; **The model already knows how to be an agent. Your job is to get out of the way.**
+
+Key insight: Don't over-engineer. The model is smart — give it good tools and clear context, then let it work.
+...</span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── 轮次 2 ──────────────────</span>
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;What skills are available?&quot;</span>
+<span class="dim">  [1] assistant/text: &quot;Based on my system configuration, here are the **4 skills**...&quot;</span>
+<span class="dim">  [2] user: &quot;Load the agent-builder skill and follow its instructions&quot;</span>
+<span class="dim">  [3] assistant/tool_use: load_skill({&quot;name&quot;: &quot;agent-builder&quot;})</span>
+<span class="dim">  [4] user/tool_result: &quot;&lt;skill name=&quot;agent-builder&quot;&gt;\n# Agent Builder\n\nBuild AI agents...&quot;</span>
+<span class="dim">]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 2: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;end_turn&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;The **agent-builder** skill is now loaded! Here's what I'm equipped to help you with:
+
+## Agent Design &amp; Building
+
+### The 3 Elements of Any Agent:
+1. **Capabi...&quot;</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 2: 循环结束 ──────────────────</span>
+<span class="bold">stop_reason = &quot;end_turn&quot; → return!</span>
+
+<span class="separator">────────────────── 最终回答 ──────────────────</span>
+The <span class="bold">**agent-builder**</span> skill is now loaded! Here's what I'm equipped to help you with:
+
+## Agent Design &amp; Building
+
+### The 3 Elements of Any Agent:
+1. <span class="bold">Capabilities</span> — What can it <span class="bold">*do*</span>? (tools, APIs, file access)
+2. <span class="bold">Knowledge</span> — What does it <span class="bold">*know*</span>? (system prompt, skills, RAG)
+3. <span class="bold">Context</span> — What has <span class="bold">*happened*</span>? (conversation history, state)
+
+### Design Thinking, Not Code-First
+- Start with the <span class="bold">user problem</span>, not the implementation
+- Identify the <span class="bold">minimum set of tools</span> needed
+- Write clear system prompts that <span class="bold">guide behavior</span>
+
+### Anti-Patterns I'll Help You Avoid
+- Over-engineering tool schemas
+- Putting too much in the system prompt
+- Not giving the model enough autonomy
+
+<span class="bold">What's your agent idea?</span> Tell me about the domain, the users, and what you want the agent to accomplish.
+
+<span class="prompt">s05 &gt;&gt;</span></pre>
+</body>
+</html>

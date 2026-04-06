@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>s05 Example 1 - What Skills Are Available</title>
+<style>
+  body {
+    background: #1e1e1e; color: #d4d4d4;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 13px; padding: 24px; line-height: 1.6;
+    max-width: 1200px; margin: 0 auto;
+  }
+  pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; }
+  .bold { font-weight: bold; }
+  .dim { opacity: 0.6; }
+  .red { color: #f44747; }
+  .green { color: #4ec94e; }
+  .yellow { color: #e5c07b; }
+  .magenta { color: #c678dd; }
+  .cyan { color: #56b6c2; }
+  .separator { color: #c678dd; }
+  .prompt { color: #56b6c2; }
+  .tool-exec { color: #e5c07b; }
+  .response { color: #4ec94e; }
+</style>
+</head>
+<body>
+<pre><span class="prompt">(learncc) yzeng@USLT751:~/Codes/learn-claude-code$ python agents/s05_skill_loading.py</span>
+<span class="bold">=== s05 verbose 模式 ===</span>
+<span class="dim">MODEL  = claude-sonnet-4-6</span>
+
+<span class="separator">────────────────── SkillLoader 扫描结果 ──────────────────</span>
+<span class="dim">skills_dir = /home/yzeng/Codes/learn-claude-code/skills</span>
+<span class="dim">扫描到 4 个 skill:</span>
+  <span class="cyan">agent-builder</span>: Design and build AI agents for any domain. Use when users:...
+    <span class="dim">Layer 1 (system prompt): ~515 字符描述</span>
+    <span class="dim">Layer 2 (tool_result):   ~4138 字符完整 body</span>
+  <span class="cyan">code-review</span>: Perform thorough code reviews with security...
+    <span class="dim">Layer 1 (system prompt): ~159 字符描述</span>
+    <span class="dim">Layer 2 (tool_result):   ~4065 字符完整 body</span>
+  <span class="cyan">mcp-builder</span>: Build MCP (Model Context Protocol) servers...
+    <span class="dim">Layer 1 (system prompt): ~175 字符描述</span>
+    <span class="dim">Layer 2 (tool_result):   ~4701 字符完整 body</span>
+  <span class="cyan">pdf</span>: Process PDF files - extract text, create PDFs...
+    <span class="dim">Layer 1 (system prompt): ~131 字符描述</span>
+    <span class="dim">Layer 2 (tool_result):   ~2416 字符完整 body</span>
+
+<span class="separator">────────────────── SYSTEM prompt (包含 Layer 1) ──────────────────</span>
+<span class="dim">You are a coding agent at /home/yzeng/Codes/learn-claude-code.
+Use load_skill to access specialized knowledge before tackling unfamiliar topics.
+
+Skills available:
+  - agent-builder: Design and build AI agents for any domain. Use when users:...
+  - code-review: Perform thorough code reviews with security...
+  - mcp-builder: Build MCP (Model Context Protocol) servers...
+  - pdf: Process PDF files - extract text, create PDFs...</span>
+
+<span class="separator">────────────────── TOOLS 列表 ──────────────────</span>
+<span class="dim">[&quot;bash&quot;, &quot;read_file&quot;, &quot;write_file&quot;, &quot;edit_file&quot;, &quot;load_skill&quot;]</span>
+
+<span class="prompt">s05 &gt;&gt; What skills are available?</span>
+
+<span class="separator">────────────────── 用户输入 ──────────────────</span>
+query = &quot;What skills are available?&quot;
+
+<span class="separator">────────────────── 轮次 1 ──────────────────</span>
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;What skills are available?&quot;</span>
+<span class="dim">]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 1: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;end_turn&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;Based on my system configuration, here are the **4 skills** currently available:
+
+| Skill | Description | Use When |
+|--...&quot;</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 1: 循环结束 ──────────────────</span>
+<span class="bold">stop_reason = &quot;end_turn&quot; → return!</span>
+
+<span class="separator">────────────────── 最终回答 ──────────────────</span>
+Based on my system configuration, here are the <span class="bold">**4 skills**</span> currently available:
+
+| Skill | Description | Use When |
+|-------|-------------|----------|
+| <span class="cyan">agent-builder</span> | Design and build AI agents for any domain | Users want to create AI agents, chatbots, or automated workflows |
+| <span class="cyan">code-review</span> | Thorough code reviews with security analysis | Users ask to review code, check for bugs, or audit a codebase |
+| <span class="cyan">mcp-builder</span> | Build MCP servers | Users want to create Model Context Protocol servers |
+| <span class="cyan">pdf</span> | Process PDF files | Users need to extract text, create PDFs, or merge documents |
+
+You can ask me to use any of these skills! For example:
+- &quot;Review my code for security issues&quot; → uses <span class="cyan">code-review</span>
+- &quot;Build me an AI agent that monitors emails&quot; → uses <span class="cyan">agent-builder</span>
+- &quot;Extract text from this PDF&quot; → uses <span class="cyan">pdf</span>
+- &quot;Create an MCP server for my database&quot; → uses <span class="cyan">mcp-builder</span>
+
+<span class="prompt">s05 &gt;&gt;</span></pre>
+</body>
+</html>
