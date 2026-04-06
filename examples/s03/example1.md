@@ -76,7 +76,7 @@ print("hello")
 
 **解读：** LLM 的第一反应不是规划，而是先读文件。这很合理——不知道文件长什么样就没法规划。结果发现 `hello.py` 只有一行 `print("hello")`。
 
-和 [s02 例 1](s02_example1.md) 一样，LLM 选了 `read_file` 而不是 `bash("cat hello.py")`——有专用工具就用专用工具。
+和 [s02 例 1](../s02/example1.md) 一样，LLM 选了 `read_file` 而不是 `bash("cat hello.py")`——有专用工具就用专用工具。
 
 ---
 
@@ -279,7 +279,7 @@ Wrote 308 bytes
 
 为什么一次写完？因为原文件只有 `print("hello")` 一行，整个重写比分三次编辑效率高得多。LLM 虽然按规则逐步标记 todo 状态，但执行层面选了最高效的方式。**规划的粒度和执行的粒度不必一致。**
 
-和 [s02 例 1](s02_example1.md) 一样，LLM 选了 `write_file` 而不是 `edit_file`——对于几乎完全重写的场景，`write_file` 更合适。
+和 [s02 例 1](../s02/example1.md) 一样，LLM 选了 `write_file` 而不是 `edit_file`——对于几乎完全重写的场景，`write_file` 更合适。
 
 ---
 
@@ -461,7 +461,7 @@ response.content = [
 stop_reason = "end_turn" → return!
 ```
 
-`stop_reason = "end_turn"` → 和 [s01 例 1](s01_example1.md) 一样，不是 `"tool_use"` 就 return，循环结束。
+`stop_reason = "end_turn"` → 和 [s01 例 1](../s01/example1.md) 一样，不是 `"tool_use"` 就 return，循环结束。
 
 ---
 

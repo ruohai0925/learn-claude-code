@@ -471,11 +471,11 @@ python agents/s01_agent_loop.py
 
 | 试这个 prompt | 观察什么 | 详细追踪 |
 |---|---|---|
-| `What python files are in this directory?` | LLM 调了几次工具？（1 次 find，2 轮 LLM 调用） | [s01_example1.md](../../agents/s01_example1.md) |
-| `Create hello.py that prints hello, then run it` | LLM 调了几次工具？（2 次：先写文件再运行，3 轮 LLM 调用） | [s01_example2.md](../../agents/s01_example2.md) |
-| `What is 2+2?` | LLM 调工具了吗？（不调，直接回答，只有 1 轮） | [s01_example3.md](../../agents/s01_example3.md) |
+| `What python files are in this directory?` | LLM 调了几次工具？（1 次 find，2 轮 LLM 调用） | [s01_example1.md](../../examples/s01/example1.md) |
+| `Create hello.py that prints hello, then run it` | LLM 调了几次工具？（2 次：先写文件再运行，3 轮 LLM 调用） | [s01_example2.md](../../examples/s01/example2.md) |
+| `What is 2+2?` | LLM 调工具了吗？（不调，直接回答，只有 1 轮） | [s01_example3.md](../../examples/s01/example3.md) |
 
-第 3 个例子很重要：**LLM 自己判断要不要调工具**。它觉得不需要就直接回答（`stop_reason = "end_turn"`），不会强制调用。三个例子的对比见 [s01_example3.md](../../agents/s01_example3.md#总结三个例子的对比) 末尾的总结表格。
+第 3 个例子很重要：**LLM 自己判断要不要调工具**。它觉得不需要就直接回答（`stop_reason = "end_turn"`），不会强制调用。三个例子的对比见 [s01_example3.md](../../examples/s01/example3.md#总结三个例子的对比) 末尾的总结表格。
 
 ### 这一课的关键收获
 

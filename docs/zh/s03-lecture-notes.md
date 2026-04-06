@@ -293,9 +293,9 @@ python agents/s03_todo_write.py
 
 | 试这个 prompt | 观察什么 | 详细追踪 |
 |---|---|---|
-| `Refactor the file hello.py: add type hints, docstrings, and a main guard` | LLM 是否先用 todo 规划 3 步？每步做完后是否更新状态？ | [s03_example1.md](../../agents/s03_example1.md) |
-| `Create a Python package with __init__.py, utils.py, and tests/test_utils.py` | LLM 规划了几个任务？有没有触发 nag reminder？ | [s03_example2.md](../../agents/s03_example2.md) |
-| `Review all Python files and fix any style issues` | 开放式任务，LLM 怎么规划？任务数量会不会超过预期？ | [s03_example3.md](../../agents/s03_example3.md) |
+| `Refactor the file hello.py: add type hints, docstrings, and a main guard` | LLM 是否先用 todo 规划 3 步？每步做完后是否更新状态？ | [s03_example1.md](../../examples/s03/example1.md) |
+| `Create a Python package with __init__.py, utils.py, and tests/test_utils.py` | LLM 规划了几个任务？有没有触发 nag reminder？ | [s03_example2.md](../../examples/s03/example2.md) |
+| `Review all Python files and fix any style issues` | 开放式任务，LLM 怎么规划？任务数量会不会超过预期？ | [s03_example3.md](../../examples/s03/example3.md) |
 
 ---
 

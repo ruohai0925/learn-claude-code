@@ -282,9 +282,9 @@ python agents/s02_tool_use.py
 
 | 试这个 prompt | 预期 LLM 选择的工具 | 详细追踪 |
 |---|---|---|
-| `Create a file called greet.py with a greet(name) function` | `write_file` | [s02_example1.md](../../agents/s02_example1.md) |
-| `Edit greet.py to add a docstring to the function` | `edit_file` | [s02_example2.md](../../agents/s02_example2.md) |
-| `Read greet.py to verify the edit worked` | `read_file` | [s02_example3.md](../../agents/s02_example3.md) |
+| `Create a file called greet.py with a greet(name) function` | `write_file` | [s02_example1.md](../../examples/s02/example1.md) |
+| `Edit greet.py to add a docstring to the function` | `edit_file` | [s02_example2.md](../../examples/s02/example2.md) |
+| `Read greet.py to verify the edit worked` | `read_file` | [s02_example3.md](../../examples/s02/example3.md) |
 
 三个 prompt 刚好覆盖三个新工具（write → edit → read）。注意 LLM 是**自己选**用哪个工具——你的 prompt 里没有指定工具名。
 
