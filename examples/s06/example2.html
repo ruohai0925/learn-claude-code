@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>s06 Example 2 - Compression Amnesia Effect</title>
+<style>
+  body {
+    background: #1e1e1e; color: #d4d4d4;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 13px; padding: 24px; line-height: 1.6;
+    max-width: 1200px; margin: 0 auto;
+  }
+  pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; }
+  .bold { font-weight: bold; }
+  .dim { opacity: 0.6; }
+  .red { color: #f44747; }
+  .green { color: #4ec94e; }
+  .yellow { color: #e5c07b; }
+  .magenta { color: #c678dd; }
+  .cyan { color: #56b6c2; }
+  .separator { color: #c678dd; }
+  .prompt { color: #56b6c2; }
+  .tool-exec { color: #e5c07b; }
+  .response { color: #4ec94e; }
+</style>
+</head>
+<body>
+<pre><span class="prompt">s06 &gt;&gt; Keep reading files until compression triggers automatically</span>
+
+<span class="separator">────────────────── 用户输入 ──────────────────</span>
+query = &quot;Keep reading files until compression triggers automatically&quot;
+
+<span class="separator">────────────────── 轮次 1 ──────────────────</span>
+<span class="dim">token 估算: ~533 / 12000</span>
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;[Conversation compressed. Transcript: .transcripts/transcript_1775519642.jsonl]...&quot;</span>
+<span class="dim">  [1] assistant/text: &quot;I'm ready to help! What would you like to work on?&quot;</span>
+<span class="dim">  [2] user: &quot;Keep reading files until compression triggers automatically&quot;</span>
+<span class="dim">]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 1: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;I'll start reading the agent files to build up context until compression triggers. Let me first check what files are ...&quot;</span>
+<span class="response">  ToolUseBlock: name=&quot;bash&quot;</span>
+<span class="response">    input={&quot;command&quot;: &quot;find /home/yzeng/Codes/learn-claude-code/agents -name '*.py' | sort&quot;}</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;</span>
+<span class="response">    input={&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/agents&quot;}</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 1: 执行工具 ──────────────────</span>
+<span class="tool-exec">执行: bash({&quot;command&quot;: &quot;find /home/yzeng/Codes/learn-claude-code/agents -name '*.py' | sort&quot;})</span>
+<span class="dim">输出 (875 字符): /home/yzeng/Codes/learn-claude-code/agents/__init__.py
+/home/yzeng/Codes/learn-claude-code/agents/s01_agent_loop.py
+/home/yzeng/Codes/learn-claude-code/agents/s02_tool_use.py
+/home/yzeng/Codes/learn-claude-code/agents/s03_todo_write.py
+/home/yzeng/Codes/learn-claude-code/agents/s04_subagent.py
+...</span>
+<span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;/home/yzeng/Codes/learn-claude-code/agents&quot;})</span>
+<span class="dim">输出 (71 字符): <span class="red">Error: [Errno 21] Is a directory: '/home/yzeng/Codes/learn-claude-code/agents'</span></span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── 轮次 2 ──────────────────</span>
+<span class="dim">token 估算: ~1690 / 12000</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 2: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;Let me start reading the files one by one to accumulate context.&quot;</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  agents/s01_agent_loop.py</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  agents/s02_tool_use.py</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 2: 执行工具 ──────────────────</span>
+<span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;agents/s01_agent_loop.py&quot;})</span>
+<span class="dim">输出 (8924 字符): #!/usr/bin/env python3
+# Harness: agent loop -- the simplest harness that actu...</span>
+<span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;agents/s02_tool_use.py&quot;})</span>
+<span class="dim">输出 (11548 字符): #!/usr/bin/env python3
+# Harness: tool integration -- teach the LLM to use too...</span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── Layer 1: micro_compact ──────────────────</span>
+<span class="yellow">tool_result 总数: 4, 保留最近 3 个</span>
+<span class="yellow">替换了 1 个旧 tool_result → &quot;[Previous: used ...]&quot;</span>
+
+<span class="separator">────────────────── 轮次 3 ──────────────────</span>
+<span class="dim">token 估算: ~6193 / 12000</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 3: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  agents/s03_todo.py</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  agents/s04_subagent.py</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 3: 执行工具 ──────────────────</span>
+<span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;agents/s03_todo.py&quot;})</span>
+<span class="dim">输出: <span class="red">Error: [Errno 2] No such file or directory: 'agents/s03_todo.py'</span></span>
+<span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;agents/s04_subagent.py&quot;})</span>
+<span class="dim">输出 (14213 字符): #!/usr/bin/env python3
+# Harness: subagent -- delegate subtasks with context i...</span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── Layer 1: micro_compact ──────────────────</span>
+<span class="yellow">tool_result 总数: 6, 保留最近 3 个</span>
+<span class="yellow">替换了 0 个旧 tool_result → &quot;[Previous: used ...]&quot;</span>
+<span class="yellow">保留了 1 个 read_file 结果（PRESERVE_RESULT_TOOLS）</span>
+
+<span class="separator">────────────────── 轮次 4 ──────────────────</span>
+<span class="dim">token 估算: ~10037 / 12000</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 4: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  agents/s05_skills.py</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  agents/s06_compress.py</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 4: 执行工具 ──────────────────</span>
+<span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;agents/s05_skills.py&quot;})</span>
+<span class="dim">输出: <span class="red">Error: [Errno 2] No such file or directory: 'agents/s05_skills.py'</span></span>
+<span class="tool-exec">执行: read_file({&quot;path&quot;: &quot;agents/s06_compress.py&quot;})</span>
+<span class="dim">输出: <span class="red">Error: [Errno 2] No such file or directory: 'agents/s06_compress.py'</span></span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── Layer 1: micro_compact ──────────────────</span>
+<span class="yellow">tool_result 总数: 8, 保留最近 3 个</span>
+<span class="yellow">替换了 0 个旧 tool_result → &quot;[Previous: used ...]&quot;</span>
+<span class="yellow">保留了 2 个 read_file 结果（PRESERVE_RESULT_TOOLS）</span>
+
+<span class="separator">────────────────── 轮次 5 ──────────────────</span>
+<span class="dim">token 估算: ~10249 / 12000</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 5: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;I see the files I tried don't match the actual names. Let me find the correct filenames.&quot;</span>
+<span class="response">  ToolUseBlock: name=&quot;bash&quot;</span>
+<span class="response">    input={&quot;command&quot;: &quot;find /home/yzeng/Codes/learn-claude-code/agents -name '*.py' | sort&quot;}</span>
+<span class="response">  ToolUseBlock: name=&quot;bash&quot;</span>
+<span class="response">    input={&quot;command&quot;: &quot;find /home/yzeng/Codes/learn-claude-code -type f | sort&quot;}</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 5: 执行工具 ──────────────────</span>
+<span class="tool-exec">执行: bash({&quot;command&quot;: &quot;find /home/yzeng/Codes/learn-claude-code/agents -name '*.py' | sort&quot;})</span>
+<span class="dim">输出 (50000 字符): /home/yzeng/Codes/learn-claude-code/agents/__init__.py
+/home/yzeng/Codes/learn-claude-code/agents/s01_agent_loop.py
+...</span>
+<span class="tool-exec">执行: bash({&quot;command&quot;: &quot;find /home/yzeng/Codes/learn-claude-code -type f | sort&quot;})</span>
+<span class="dim">输出 (50000 字符): /home/yzeng/Codes/learn-claude-code/.env
+/home/yzeng/Codes/learn-claude-code/.env.example
+...</span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── Layer 1: micro_compact ──────────────────</span>
+<span class="yellow">tool_result 总数: 10, 保留最近 3 个</span>
+<span class="yellow">替换了 0 个旧 tool_result → &quot;[Previous: used ...]&quot;</span>
+<span class="yellow">保留了 4 个 read_file 结果（PRESERVE_RESULT_TOOLS）</span>
+<span class="dim">压缩后 token 估算: ~35639</span>
+
+<span class="separator">────────────────── Layer 2: 触发! token 估算 ~35639 &gt; 12000 ──────────────────</span>
+
+<span class="separator">────────────────── Layer 2: auto_compact — 保存 transcript ──────────────────</span>
+<span class="yellow">transcript 保存到: .transcripts/transcript_1775519710.jsonl</span>
+<span class="yellow">原始 messages: 13 条</span>
+
+<span class="separator">────────────────── Layer 2: auto_compact — LLM 总结 ──────────────────</span>
+<span class="cyan">→ 调用 client.messages.create(...)（总结用，非主循环）</span>
+
+<span class="separator">────────────────── Layer 2: auto_compact — 压缩结果 ──────────────────</span>
+<span class="bold">原始: 13 条 messages → 压缩后: 1 条</span>
+
+<span class="separator">────────────────── 轮次 6 ──────────────────</span>
+<span class="dim">token 估算: ~456 / 12000</span>
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;[Conversation compressed. Transcript: .transcripts/transcript_1775519710.jsonl]...&quot;</span>
+<span class="dim">]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 6: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;end_turn&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;I have the context from the compressed conversation. The repository structure is clear — it's a learn-claude-code proj...&quot;</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 6: 循环结束 ──────────────────</span>
+<span class="bold">stop_reason = &quot;end_turn&quot; → return!</span>
+
+<span class="separator">────────────────── 最终回答 ──────────────────</span>
+I have the context from the compressed conversation.
+The repository structure is clear — it's a learn-claude-code project with progressive agent harness implementations (s01 through s12 plus s_full.py). I've read through s01_agent_loop.py, s02_tool_use.py, and s04_subagent.py so far, and encountered some file-not-found errors when guessing filenames (s03_todo.py, s05_skills.py, s06_compress.py don't exist — the actual names use longer suffixes like s03_todo_write.py, s05_skill_loading.py, s06_context_compact.py).
+
+The compression has triggered twice now. What would you like me to do next?
+
+<span class="prompt">s06 &gt;&gt;</span></pre>
+</body>
+</html>

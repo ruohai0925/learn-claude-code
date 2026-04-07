@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>s06 Example 3 - Manual Compact (Layer 3)</title>
+<style>
+  body { background: #1e1e1e; color: #d4d4d4; font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; font-size: 13px; padding: 24px; line-height: 1.6; max-width: 1200px; margin: 0 auto; }
+  pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; }
+  .bold { font-weight: bold; } .dim { opacity: 0.6; } .red { color: #f44747; } .green { color: #4ec94e; } .yellow { color: #e5c07b; } .magenta { color: #c678dd; } .cyan { color: #56b6c2; } .separator { color: #c678dd; } .prompt { color: #56b6c2; } .tool-exec { color: #e5c07b; } .response { color: #4ec94e; } .error { color: #f44747; }
+</style>
+</head>
+<body>
+<pre><span class="prompt">s06 &gt;&gt; Use the compact tool to manually compress the conversation</span>
+
+<span class="separator">────────────────── 用户输入 ──────────────────</span>
+query = &quot;Use the compact tool to manually compress the conversation&quot;
+
+<span class="separator">────────────────── 起始状态 ──────────────────</span>
+token 估算: ~598 / 12000
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;[Conversation compressed...]...&quot;   ← example2 的 summary</span>
+<span class="dim">  [1] assistant/text: &quot;I have the context from the compressed conversation...&quot;</span>
+<span class="dim">  [2] user: &quot;Use the compact tool to manually compress the conversation&quot;</span>
+<span class="dim">]</span>
+
+<span class="separator">────────────────── 轮次 1 ──────────────────</span>
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 1: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  ToolUseBlock: name=&quot;compact&quot;, id=&quot;toolu_01TsiCLYW95T8zmNwh9Jxecx&quot;</span>
+<span class="response">    input={&quot;focus&quot;: &quot;Repository structure of learn-claude-code project, including agents (s01-s12),</span>
+<span class="response">    docs (EN/ZH/JA), examples (s01-s05 with MCP server at s05), Python 3.13 venv with</span>
+<span class="response">    mcp/fastapi/uvicorn/httpx/py...&quot;}</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 1: 执行工具 ──────────────────</span>
+<span class="red bold">compact 工具被调用! 将在本轮结束后执行压缩</span>
+
+<span class="separator">────────────────── <span class="yellow">Layer 3: manual compact 执行</span> ──────────────────</span>
+
+<span class="separator">────────────────── <span class="yellow">Layer 2: auto_compact — 保存 transcript</span> ──────────────────</span>
+transcript 保存到: .transcripts/transcript_1775519844.jsonl
+原始 messages: 5 条
+
+<span class="separator">────────────────── <span class="yellow">Layer 2: auto_compact — LLM 总结</span> ──────────────────</span>
+<span class="cyan">→ 调用 client.messages.create(...)（总结用，非主循环）</span>
+发送 conversation_text 最后 2993 字符给 LLM 做总结
+
+<span class="separator">────────────────── <span class="yellow">Layer 2: auto_compact — 压缩结果</span> ──────────────────</span>
+原始: 5 条 messages → 压缩后: 1 条
+summary (1299 字符):
+<span class="dim">## Conversation Summary
+### 1) What Was Accomplished
+- Repository structure exploration was performed
+- A manual compact tool call was attempted</span>
+
+<span class="separator">────────────────── 最终回答 ──────────────────</span>
+[Conversation compressed. Transcript: .transcripts/transcript_1775519844.jsonl]
+
+## Conversation Summary
+### 1) What Was Accomplished
+- Repository structure exploration was performed
+- A manual compact tool call was attempted
+
+### 2) Current State
+- Project: learn-claude-code repository
+- Structure:
+  - agents/: 12 agent example scripts (s01–s12)...
+
+<span class="prompt">s06 &gt;&gt;</span></pre>
+</body>
+</html>

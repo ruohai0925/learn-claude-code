@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>s06 Example 1 - Read All Python Files (Layer 1 + Layer 2)</title>
+<style>
+  body { background: #1e1e1e; color: #d4d4d4; font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; font-size: 13px; padding: 24px; line-height: 1.6; max-width: 1200px; margin: 0 auto; }
+  pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; }
+  .bold { font-weight: bold; } .dim { opacity: 0.6; } .red { color: #f44747; } .green { color: #4ec94e; } .yellow { color: #e5c07b; } .magenta { color: #c678dd; } .cyan { color: #56b6c2; } .separator { color: #c678dd; } .prompt { color: #56b6c2; } .tool-exec { color: #e5c07b; } .response { color: #4ec94e; } .error { color: #f44747; }
+</style>
+</head>
+<body>
+<pre><span class="prompt">(learncc) yzeng@USLT751:~/Codes/learn-claude-code$ python agents/s06_context_compact.py</span>
+<span class="bold">=== s06 verbose 模式 ===</span>
+<span class="dim">MODEL     = claude-sonnet-4-6</span>
+<span class="dim">THRESHOLD = 12000 token（触发 auto_compact）</span>
+<span class="dim">KEEP_RECENT = 3（micro_compact 保留最近 N 个 tool_result）</span>
+<span class="dim">PRESERVE_RESULT_TOOLS = {&apos;read_file&apos;}（这些工具的结果不被 micro_compact 替换）</span>
+<span class="dim">TRANSCRIPT_DIR = /home/yzeng/Codes/learn-claude-code/.transcripts</span>
+
+<span class="separator">────────────────── TOOLS 列表 ──────────────────</span>
+<span class="dim">[&quot;bash&quot;, &quot;read_file&quot;, &quot;write_file&quot;, &quot;edit_file&quot;, &quot;compact&quot;]</span>
+<span class="dim">注意: compact 工具是 Layer 3（手动压缩）</span>
+
+<span class="prompt">s06 &gt;&gt; Read every Python file in the agents/ directory one by one</span>
+
+<span class="separator">────────────────── 用户输入 ──────────────────</span>
+query = &quot;Read every Python file in the agents/ directory one by one&quot;
+
+<span class="separator">────────────────── 轮次 1 ──────────────────</span>
+<span class="dim">token 估算: ~22 / 12000</span>
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;Read every Python file in the agents/ directory one by one&quot;</span>
+<span class="dim">]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 1: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;I&apos;ll start by finding all Python files in the agents/ directory.&quot;</span>
+<span class="response">  ToolUseBlock: name=&quot;bash&quot;, input={&quot;command&quot;: &quot;find agents/ -name &apos;*.py&apos; -type f | sort&quot;}</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 1: 执行工具 ──────────────────</span>
+<span class="tool-exec">bash: find agents/ -name &apos;*.py&apos; -type f | sort</span>
+<span class="dim">agents/__init__.py
+agents/s01_agent_loop.py
+agents/s02_tool_use.py
+agents/s03_todo_write.py
+agents/s04_subagent.py
+agents/s05_skill_loading.py
+agents/s06_context_compact.py
+agents/s07_task_system.py
+agents/s08_background_tasks.py
+agents/s09_agent_teams.py
+agents/s10_team_protocols.py
+agents/s11_autonomous_agents.py
+agents/s12_worktree_task_isolation.py
+agents/s_full.py</span>
+
+<span class="separator">────────────────── 轮次 2 ──────────────────</span>
+<span class="dim">token 估算: ~370 / 12000</span>
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;Read every Python file in the agents/ directory one by one&quot;</span>
+<span class="dim">  [1] assistant: [TextBlock + ToolUseBlock(bash)]</span>
+<span class="dim">  [2] user: [tool_result: bash find output]</span>
+<span class="dim">]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 2: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;Found <span class="bold">14 Python files</span>. Now I&apos;ll read them all at once!&quot;</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  __init__.py           (202 字符)</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  s01_agent_loop.py     (8924 字符)</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  s02_tool_use.py       (11548 字符)</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  s03_todo_write.py     (15164 字符)</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  s04_subagent.py       (14213 字符)</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  s05_skill_loading.py  (16541 字符)</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  s06_context_compact.py(19679 字符)</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  s07_task_system.py    (10108 字符)</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  s08_background_tasks.py(9349 字符)</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  s09_agent_teams.py    (16835 字符)</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  s10_team_protocols.py (21028 字符)</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  s11_autonomous_agents.py(25021 字符)</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  s12_worktree_task_isolation.py(25882 字符)</span>
+<span class="response">  ToolUseBlock: name=&quot;read_file&quot;  →  s_full.py             (36454 字符)</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 2: 执行工具 ──────────────────</span>
+<span class="tool-exec">read_file: agents/__init__.py           → 202 字符</span>
+<span class="tool-exec">read_file: agents/s01_agent_loop.py     → 8924 字符</span>
+<span class="tool-exec">read_file: agents/s02_tool_use.py       → 11548 字符</span>
+<span class="tool-exec">read_file: agents/s03_todo_write.py     → 15164 字符</span>
+<span class="tool-exec">read_file: agents/s04_subagent.py       → 14213 字符</span>
+<span class="tool-exec">read_file: agents/s05_skill_loading.py  → 16541 字符</span>
+<span class="tool-exec">read_file: agents/s06_context_compact.py→ 19679 字符</span>
+<span class="tool-exec">read_file: agents/s07_task_system.py    → 10108 字符</span>
+<span class="tool-exec">read_file: agents/s08_background_tasks.py→ 9349 字符</span>
+<span class="tool-exec">read_file: agents/s09_agent_teams.py    → 16835 字符</span>
+<span class="tool-exec">read_file: agents/s10_team_protocols.py → 21028 字符</span>
+<span class="tool-exec">read_file: agents/s11_autonomous_agents.py→ 25021 字符</span>
+<span class="tool-exec">read_file: agents/s12_worktree_task_isolation.py→ 25882 字符</span>
+<span class="tool-exec">read_file: agents/s_full.py             → 36454 字符</span>
+<span class="dim">（14 个 read_file 并行执行完毕，总计 ~230,948 字符）</span>
+
+<span class="separator">────────────────── Layer 1: micro_compact ──────────────────</span>
+<span class="yellow">tool_result 总数: 15, 保留最近 3 个</span>
+<span class="yellow">替换了 1 个旧 tool_result → &quot;[Previous: used bash]&quot;</span>
+<span class="yellow">保留了 11 个 read_file 结果（PRESERVE_RESULT_TOOLS）</span>
+<span class="yellow">压缩后 token 估算: ~60571</span>
+
+<span class="separator">────────────────── Layer 2: 触发! token 估算 ~60571 &gt; 12000 ──────────────────</span>
+
+<span class="separator">────────────────── Layer 2: auto_compact — 保存 transcript ──────────────────</span>
+<span class="dim">transcript 保存到: .transcripts/transcript_1775519642.jsonl</span>
+<span class="dim">原始 messages: 5 条</span>
+
+<span class="separator">────────────────── Layer 2: auto_compact — LLM 总结 ──────────────────</span>
+<span class="cyan">→ 调用 client.messages.create(...)（总结用，非主循环）</span>
+
+<span class="separator">────────────────── Layer 2: auto_compact — 压缩结果 ──────────────────</span>
+<span class="yellow">原始: 5 条 messages → 压缩后: 1 条</span>
+<span class="yellow">summary (1736 字符):</span>
+<span class="dim">## Conversation Summary
+### What Was Accomplished
+A progressive series of Python agent harness implementations was reviewed,
+covering 14 files in the agents/ directory:
+
+- s01_agent_loop.py: Basic agent loop with tool execution
+- s02_tool_use.py: Tool registration and dispatch
+- s03_todo_write.py: TodoWrite tool for task tracking
+- s04_subagent.py: Sub-agent spawning with context isolation
+- s05_skill_loading.py: Lazy skill loading from skills/ directory
+- s06_context_compact.py: Context compression (micro_compact + auto_compact)
+- s07_task_system.py: Background task management
+- s08_background_tasks.py: Async background task execution
+- s09_agent_teams.py: Multi-agent team coordination
+- s10_team_protocols.py: Team communication protocols
+- s11_autonomous_agents.py: Autonomous agent with planning
+- s12_worktree_task_isolation.py: Git worktree isolation for parallel tasks
+- s_full.py: Full-featured agent combining all capabilities
+- __init__.py: Package init
+
+### Current State
+All 14 Python files have been read. User may want analysis,
+comparison, or modification of these agent implementations.</span>
+
+<span class="separator">────────────────── 轮次 3 ──────────────────</span>
+<span class="dim">token 估算: ~477 / 12000</span>
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;[Conversation compressed. Transcript: .transcripts/transcript_1775519642.jsonl]\n\n## Conversation Summary\n### What Was Accomplished\nA progressive series of Python agent harness implementations was reviewed...&quot;</span>
+<span class="dim">]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 3: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;end_turn&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;I&apos;ve read all 14 Python files in the agents/ directory. I&apos;m ready to help! What would you like to work on?&quot;</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 3: 循环结束 ──────────────────</span>
+<span class="bold">stop_reason = &quot;end_turn&quot; → return!</span>
+
+<span class="separator">────────────────── 最终回答 ──────────────────</span>
+I&apos;ve read all <span class="bold">14 Python files</span> in the agents/ directory. I&apos;m ready to help! What would you like to work on?
+
+<span class="prompt">s06 &gt;&gt;</span></pre>
+</body>
+</html>
