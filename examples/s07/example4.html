@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>s07 Example 4 - Diamond DAG (parse → transform/emit → test)</title>
+<style>
+  body {
+    background: #1e1e1e; color: #d4d4d4;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 13px; padding: 24px; line-height: 1.6;
+    max-width: 1200px; margin: 0 auto;
+  }
+  pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; }
+  .bold { font-weight: bold; }
+  .dim { opacity: 0.6; }
+  .red { color: #f44747; }
+  .green { color: #4ec94e; }
+  .yellow { color: #e5c07b; }
+  .magenta { color: #c678dd; }
+  .cyan { color: #56b6c2; }
+  .separator { color: #c678dd; }
+  .prompt { color: #56b6c2; }
+  .tool-exec { color: #e5c07b; }
+  .response { color: #4ec94e; }
+</style>
+</head>
+<body>
+<pre><span class="prompt">s07 &gt;&gt; Create a task board for refactoring: parse → transform → emit → test, where transform and emit can run in parallel after parse</span>
+
+<span class="separator">────────────────── 用户输入 ──────────────────</span>
+query = &quot;Create a task board for refactoring: parse → transform → emit → test, where transform and emit can run in parallel after parse&quot;
+
+<span class="separator">────────────────── 轮次 1 ──────────────────</span>
+<span class="dim">messages = [
+  ...（example1 + example2 + example3 的全部 16 条消息）
+  [16] user: &quot;Create a task board for refactoring: parse → transform → emit → test, where tran...&quot;
+]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 1: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;I&apos;ll create all 4 tasks simultaneously first!&quot;</span>
+<span class="response">  ToolUseBlock: name=&quot;task_create&quot;, id=&quot;toolu_01H1A2jkMQdHbxR7mVFJ1MxD&quot;</span>
+<span class="response">    input={&quot;subject&quot;: &quot;Parse&quot;}</span>
+<span class="response">  ToolUseBlock: name=&quot;task_create&quot;, id=&quot;toolu_01TzZ9C1HiS1gqRRcV2xxcqr&quot;</span>
+<span class="response">    input={&quot;subject&quot;: &quot;Transform&quot;}</span>
+<span class="response">  ToolUseBlock: name=&quot;task_create&quot;, id=&quot;toolu_014AdLkTnbBzMoDAzi1EDSz4&quot;</span>
+<span class="response">    input={&quot;subject&quot;: &quot;Emit&quot;}</span>
+<span class="response">  ToolUseBlock: name=&quot;task_create&quot;, id=&quot;toolu_013Tt1Dag8LSw9ztg3tH2Tfb&quot;</span>
+<span class="response">    input={&quot;subject&quot;: &quot;Test&quot;}</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 1: 执行工具 ──────────────────</span>
+  <span class="green">创建 task_4.json: &quot;Parse&quot;</span>
+<span class="yellow">执行: task_create({&quot;subject&quot;: &quot;Parse&quot;})</span>
+<span class="dim">输出 (113 字符): {
+  &quot;id&quot;: 4,
+  &quot;subject&quot;: &quot;Parse&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;blockedBy&quot;: [],
+  &quot;owner&quot;: &quot;&quot;
+}</span>
+  <span class="green">创建 task_5.json: &quot;Transform&quot;</span>
+<span class="yellow">执行: task_create({&quot;subject&quot;: &quot;Transform&quot;})</span>
+<span class="dim">输出 (117 字符): {
+  &quot;id&quot;: 5,
+  &quot;subject&quot;: &quot;Transform&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;blockedBy&quot;: [],
+  &quot;owner&quot;: &quot;&quot;
+}</span>
+  <span class="green">创建 task_6.json: &quot;Emit&quot;</span>
+<span class="yellow">执行: task_create({&quot;subject&quot;: &quot;Emit&quot;})</span>
+<span class="dim">输出 (112 字符): {
+  &quot;id&quot;: 6,
+  &quot;subject&quot;: &quot;Emit&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;blockedBy&quot;: [],
+  &quot;owner&quot;: &quot;&quot;
+}</span>
+  <span class="green">创建 task_7.json: &quot;Test&quot;</span>
+<span class="yellow">执行: task_create({&quot;subject&quot;: &quot;Test&quot;})</span>
+<span class="dim">输出 (112 字符): {
+  &quot;id&quot;: 7,
+  &quot;subject&quot;: &quot;Test&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;blockedBy&quot;: [],
+  &quot;owner&quot;: &quot;&quot;
+}</span>
+
+<span class="dim">.tasks/ 目录状态：
+  task_1.json: [x] #1 &quot;Setup project&quot;
+  task_2.json: [ ] #2 &quot;Write code&quot;
+  task_3.json: [ ] #3 &quot;Write tests&quot; blockedBy=[2]
+  task_4.json: [ ] #4 &quot;Parse&quot;
+  task_5.json: [ ] #5 &quot;Transform&quot;
+  task_6.json: [ ] #6 &quot;Emit&quot;
+  task_7.json: [ ] #7 &quot;Test&quot;</span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── 轮次 2 ──────────────────</span>
+<span class="dim">messages = [
+  ...
+  [17] assistant: [TextBlock + 4 × ToolUseBlock(task_create)]
+  [18] user: [4 × tool_result(task_4..7 JSON)]
+]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 2: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;All 4 tasks created! Now I&apos;ll wire up the dependencies — Transform and Emit both blocked by Parse, and Test blocked by b...&quot;</span>
+<span class="response">  ToolUseBlock: name=&quot;task_update&quot;, id=&quot;toolu_011iWpV93xPLf2iNuDbzXpCP&quot;</span>
+<span class="response">    input={&quot;task_id&quot;: 5, &quot;addBlockedBy&quot;: [4]}</span>
+<span class="response">  ToolUseBlock: name=&quot;task_update&quot;, id=&quot;toolu_01Nk1XAAFEo2j7duGr8L67AK&quot;</span>
+<span class="response">    input={&quot;task_id&quot;: 6, &quot;addBlockedBy&quot;: [4]}</span>
+<span class="response">  ToolUseBlock: name=&quot;task_update&quot;, id=&quot;toolu_01C3egAZWyUJa4KfxBuS7dHE&quot;</span>
+<span class="response">    input={&quot;task_id&quot;: 7, &quot;addBlockedBy&quot;: [5, 6]}</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 2: 执行工具 ──────────────────</span>
+  <span class="green">task_5: blockedBy [] → [4]</span>
+<span class="yellow">执行: task_update({&quot;task_id&quot;: 5, &quot;addBlockedBy&quot;: [4]})</span>
+<span class="dim">输出 (126 字符): {
+  &quot;id&quot;: 5,
+  &quot;subject&quot;: &quot;Transform&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;blockedBy&quot;: [
+    4
+  ],
+  &quot;owner&quot;: &quot;&quot;
+}</span>
+  <span class="green">task_6: blockedBy [] → [4]</span>
+<span class="yellow">执行: task_update({&quot;task_id&quot;: 6, &quot;addBlockedBy&quot;: [4]})</span>
+<span class="dim">输出 (121 字符): {
+  &quot;id&quot;: 6,
+  &quot;subject&quot;: &quot;Emit&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;blockedBy&quot;: [
+    4
+  ],
+  &quot;owner&quot;: &quot;&quot;
+}</span>
+  <span class="green">task_7: blockedBy [] → [5, 6]</span>
+<span class="yellow">执行: task_update({&quot;task_id&quot;: 7, &quot;addBlockedBy&quot;: [5, 6]})</span>
+<span class="dim">输出 (128 字符): {
+  &quot;id&quot;: 7,
+  &quot;subject&quot;: &quot;Test&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;blockedBy&quot;: [
+    5,
+    6
+  ],
+  &quot;owner&quot;: &quot;&quot;
+}</span>
+
+<span class="dim">.tasks/ 目录状态：
+  task_1.json: [x] #1 &quot;Setup project&quot;
+  task_2.json: [ ] #2 &quot;Write code&quot;
+  task_3.json: [ ] #3 &quot;Write tests&quot; blockedBy=[2]
+  task_4.json: [ ] #4 &quot;Parse&quot;
+  task_5.json: [ ] #5 &quot;Transform&quot; blockedBy=[4]
+  task_6.json: [ ] #6 &quot;Emit&quot; blockedBy=[4]
+  task_7.json: [ ] #7 &quot;Test&quot; blockedBy=[5, 6]</span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── 轮次 3 ──────────────────</span>
+<span class="dim">messages = [
+  ...
+  [19] assistant: [TextBlock + 3 × ToolUseBlock(task_update)]
+  [20] user: [3 × tool_result(task_5/6/7 JSON)]
+]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 3: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;end_turn&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;All dependencies are set! Here&apos;s the full picture:
+
+### Task Board — Refactoring Pipeline
+
+| ID | Task | Status | Blocked By |
+|----|------|--------|------------|
+| 4 | Parse | ⬜ Pending | — |
+| 5 | Transform | ⬜ Pending | #4 |
+| 6 | Emit | ⬜ Pending | #4 |
+| 7 | Test | ⬜ Pending | #5, #6 |
+
+### Dependency Graph
+```
+      #4 Parse
+       /     \
+      ▼       ▼
+#5 Transform  #6 Emit
+      \       /
+       ▼     ▼
+       #7 Test
+```
+
+### Execution Plan
+- **Stage 1 — Sequential:** `#4 Parse` must go first.
+- **Stage 2 — Parallel:** Once Parse is done, `#5 Transform` and `#6 Emit` can run **at the same time**.
+- **Stage 3 — Sequential:** `#7 Test` only starts after **both** Transform and Emit are complete.&quot;</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 3: 循环结束 ──────────────────</span>
+<span class="bold">stop_reason = &quot;end_turn&quot; → return!</span>
+
+<span class="separator">────────────────── 最终回答 ──────────────────</span>
+All dependencies are set! Here&apos;s the full picture:
+
+### Task Board — Refactoring Pipeline
+
+| ID | Task | Status | Blocked By |
+|----|------|--------|------------|
+| 4 | Parse | ⬜ Pending | — |
+| 5 | Transform | ⬜ Pending | #4 |
+| 6 | Emit | ⬜ Pending | #4 |
+| 7 | Test | ⬜ Pending | <span class="bold">#5, #6</span> |
+
+### Dependency Graph
+<span class="dim">```</span>
+      <span class="bold">#4 Parse</span>
+       /     \
+      ▼       ▼
+<span class="green">#5 Transform</span>  <span class="green">#6 Emit</span>
+      \       /
+       ▼     ▼
+       <span class="bold">#7 Test</span>
+<span class="dim">```</span>
+
+### Execution Plan
+- <span class="bold">Stage 1 — Sequential:</span> <span class="yellow">#4 Parse</span> must go first.
+- <span class="bold">Stage 2 — Parallel:</span> Once Parse is done, <span class="green">#5 Transform</span> and <span class="green">#6 Emit</span> can run <span class="bold">at the same time</span>.
+- <span class="bold">Stage 3 — Sequential:</span> <span class="yellow">#7 Test</span> only starts after <span class="bold">both</span> Transform and Emit are complete.
+
+<span class="prompt">s07 &gt;&gt;</span></pre>
+</body>
+</html>

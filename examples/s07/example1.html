@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>s07 Example 1 - Create 3 Tasks with Chain Dependency</title>
+<style>
+  body {
+    background: #1e1e1e; color: #d4d4d4;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 13px; padding: 24px; line-height: 1.6;
+    max-width: 1200px; margin: 0 auto;
+  }
+  pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; }
+  .bold { font-weight: bold; }
+  .dim { opacity: 0.6; }
+  .red { color: #f44747; }
+  .green { color: #4ec94e; }
+  .yellow { color: #e5c07b; }
+  .magenta { color: #c678dd; }
+  .cyan { color: #56b6c2; }
+  .separator { color: #c678dd; }
+  .prompt { color: #56b6c2; }
+  .tool-exec { color: #e5c07b; }
+  .response { color: #4ec94e; }
+</style>
+</head>
+<body>
+<pre><span class="prompt">(learncc) yzeng@USLT751:~/Codes/learn-claude-code$ python agents/s07_task_system.py</span>
+<span class="bold">=== s07 verbose 模式 ===</span>
+<span class="dim">MODEL     = claude-sonnet-4-6</span>
+<span class="dim">TASKS_DIR = /home/yzeng/Codes/learn-claude-code/.tasks</span>
+<span class="dim">下一个 task ID: 1（启动时扫描了已有文件）</span>
+
+<span class="separator">────────────────── TOOLS 列表 ──────────────────</span>
+<span class="dim">[&quot;bash&quot;, &quot;read_file&quot;, &quot;write_file&quot;, &quot;edit_file&quot;, &quot;task_create&quot;, &quot;task_update&quot;, &quot;task_list&quot;, &quot;task_get&quot;]</span>
+<span class="dim">注意: task_* 工具操作磁盘上的 .tasks/ 目录</span>
+
+<span class="prompt">s07 &gt;&gt; Create 3 tasks: &quot;Setup project&quot;, &quot;Write code&quot;, &quot;Write tests&quot;. Make them depend on each other in order.</span>
+
+<span class="separator">────────────────── 用户输入 ──────────────────</span>
+query = &quot;Create 3 tasks: &quot;Setup project&quot;, &quot;Write code&quot;, &quot;Write tests&quot;. Make them depend on each other in order.&quot;
+
+<span class="separator">────────────────── 轮次 1 ──────────────────</span>
+<span class="dim">messages = [</span>
+<span class="dim">  [0] user: &quot;Create 3 tasks: &quot;Setup project&quot;, &quot;Write code&quot;, &quot;Write tests&quot;. Make them depend o...&quot;</span>
+<span class="dim">]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 1: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;I&apos;ll create all 3 tasks simultaneously, then set up the dependencies in order!&quot;</span>
+<span class="response">  ToolUseBlock: name=&quot;task_create&quot;, id=&quot;toolu_01CRjJcTEJwk68VDdjbSVM1x&quot;</span>
+<span class="response">    input={&quot;subject&quot;: &quot;Setup project&quot;}</span>
+<span class="response">  ToolUseBlock: name=&quot;task_create&quot;, id=&quot;toolu_01CgLDWcn3GBE3ZJcVntWAju&quot;</span>
+<span class="response">    input={&quot;subject&quot;: &quot;Write code&quot;}</span>
+<span class="response">  ToolUseBlock: name=&quot;task_create&quot;, id=&quot;toolu_01MXqf8aZHFUbQHSZphT5d8w&quot;</span>
+<span class="response">    input={&quot;subject&quot;: &quot;Write tests&quot;}</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 1: 执行工具 ──────────────────</span>
+  <span class="green">创建 task_1.json: &quot;Setup project&quot;</span>
+<span class="yellow">执行: task_create({&quot;subject&quot;: &quot;Setup project&quot;})</span>
+<span class="dim">输出 (121 字符): {
+  &quot;id&quot;: 1,
+  &quot;subject&quot;: &quot;Setup project&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;blockedBy&quot;: [],
+  &quot;owner&quot;: &quot;&quot;
+}</span>
+  <span class="green">创建 task_2.json: &quot;Write code&quot;</span>
+<span class="yellow">执行: task_create({&quot;subject&quot;: &quot;Write code&quot;})</span>
+<span class="dim">输出 (118 字符): {
+  &quot;id&quot;: 2,
+  &quot;subject&quot;: &quot;Write code&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;blockedBy&quot;: [],
+  &quot;owner&quot;: &quot;&quot;
+}</span>
+  <span class="green">创建 task_3.json: &quot;Write tests&quot;</span>
+<span class="yellow">执行: task_create({&quot;subject&quot;: &quot;Write tests&quot;})</span>
+<span class="dim">输出 (119 字符): {
+  &quot;id&quot;: 3,
+  &quot;subject&quot;: &quot;Write tests&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;blockedBy&quot;: [],
+  &quot;owner&quot;: &quot;&quot;
+}</span>
+
+<span class="dim">.tasks/ 目录状态：
+  task_1.json: [ ] #1 &quot;Setup project&quot;
+  task_2.json: [ ] #2 &quot;Write code&quot;
+  task_3.json: [ ] #3 &quot;Write tests&quot;</span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── 轮次 2 ──────────────────</span>
+<span class="dim">messages = [
+  [0] user: &quot;Create 3 tasks: &quot;Setup project&quot;, &quot;Write code&quot;, &quot;Write tests&quot;. Make them depend o...&quot;
+  [1] assistant/text: &quot;I&apos;ll create all 3 tasks simultaneously, then set up the dependencies in order!&quot;
+  [1] assistant/tool_use: task_create({&quot;subject&quot;: &quot;Setup project&quot;})
+  [1] assistant/tool_use: task_create({&quot;subject&quot;: &quot;Write code&quot;})
+  [1] assistant/tool_use: task_create({&quot;subject&quot;: &quot;Write tests&quot;})
+  [2] user/tool_result: &quot;{
+  &quot;id&quot;: 1,
+  &quot;subject&quot;: &quot;Setup project&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pen...&quot;
+  [2] user/tool_result: &quot;{
+  &quot;id&quot;: 2,
+  &quot;subject&quot;: &quot;Write code&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pendin...&quot;
+  [2] user/tool_result: &quot;{
+  &quot;id&quot;: 3,
+  &quot;subject&quot;: &quot;Write tests&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pendi...&quot;
+]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 2: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;All 3 tasks are created! Now I&apos;ll set up the dependencies — &quot;Write code&quot; blocked by &quot;Setup project&quot;, and &quot;Write tests&quot; b...&quot;</span>
+<span class="response">  ToolUseBlock: name=&quot;task_update&quot;, id=&quot;toolu_0183D1pj2SziPBN5RcaiEdsC&quot;</span>
+<span class="response">    input={&quot;task_id&quot;: 2, &quot;addBlockedBy&quot;: [1]}</span>
+<span class="response">  ToolUseBlock: name=&quot;task_update&quot;, id=&quot;toolu_01JzEckNAU2zKcn6uoY31sQH&quot;</span>
+<span class="response">    input={&quot;task_id&quot;: 3, &quot;addBlockedBy&quot;: [2]}</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 2: 执行工具 ──────────────────</span>
+  <span class="green">task_2: blockedBy [] → [1]</span>
+<span class="yellow">执行: task_update({&quot;task_id&quot;: 2, &quot;addBlockedBy&quot;: [1]})</span>
+<span class="dim">输出 (127 字符): {
+  &quot;id&quot;: 2,
+  &quot;subject&quot;: &quot;Write code&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;blockedBy&quot;: [
+    1
+  ],
+  &quot;owner&quot;: &quot;&quot;
+}</span>
+  <span class="green">task_3: blockedBy [] → [2]</span>
+<span class="yellow">执行: task_update({&quot;task_id&quot;: 3, &quot;addBlockedBy&quot;: [2]})</span>
+<span class="dim">输出 (128 字符): {
+  &quot;id&quot;: 3,
+  &quot;subject&quot;: &quot;Write tests&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;pending&quot;,
+  &quot;blockedBy&quot;: [
+    2
+  ],
+  &quot;owner&quot;: &quot;&quot;
+}</span>
+
+<span class="dim">.tasks/ 目录状态：
+  task_1.json: [ ] #1 &quot;Setup project&quot;
+  task_2.json: [ ] #2 &quot;Write code&quot; blockedBy=[1]
+  task_3.json: [ ] #3 &quot;Write tests&quot; blockedBy=[2]</span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── 轮次 3 ──────────────────</span>
+<span class="dim">messages = [
+  [0] user: &quot;Create 3 tasks: ...&quot;
+  [1] assistant: [TextBlock + 3 × ToolUseBlock(task_create)]
+  [2] user: [3 × tool_result(task JSON)]
+  [3] assistant: [TextBlock + 2 × ToolUseBlock(task_update)]
+  [4] user: [2 × tool_result(updated task JSON)]
+]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 3: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;end_turn&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;All done! Here&apos;s a summary of the 3 tasks and their dependencies:
+
+| ID | Task | Blocked By |
+|----|------|------------|
+| 1 | Setup project | *(none — start here)* |
+| 2 | Write code | Task 1 (Setup project) |
+| 3 | Write tests | Task 2 (Write code) |
+
+The order is enforced as a chain: **Setup project → Write code → Write tests**. Each task must be completed before the next one can begin.&quot;</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 3: 循环结束 ──────────────────</span>
+<span class="bold">stop_reason = &quot;end_turn&quot; → return!</span>
+
+<span class="separator">────────────────── 最终回答 ──────────────────</span>
+All done! Here&apos;s a summary of the 3 tasks and their dependencies:
+
+| ID | Task | Blocked By |
+|----|------|------------|
+| 1 | Setup project | <span class="dim">*(none — start here)*</span> |
+| 2 | Write code | Task 1 (Setup project) |
+| 3 | Write tests | Task 2 (Write code) |
+
+The order is enforced as a chain: <span class="bold">Setup project → Write code → Write tests</span>. Each task must be completed before the next one can begin.
+
+<span class="prompt">s07 &gt;&gt;</span></pre>
+</body>
+</html>

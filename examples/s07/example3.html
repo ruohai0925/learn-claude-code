@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>s07 Example 3 - Complete Task and Auto-Unblock</title>
+<style>
+  body {
+    background: #1e1e1e; color: #d4d4d4;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 13px; padding: 24px; line-height: 1.6;
+    max-width: 1200px; margin: 0 auto;
+  }
+  pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; }
+  .bold { font-weight: bold; }
+  .dim { opacity: 0.6; }
+  .red { color: #f44747; }
+  .green { color: #4ec94e; }
+  .yellow { color: #e5c07b; }
+  .magenta { color: #c678dd; }
+  .cyan { color: #56b6c2; }
+  .separator { color: #c678dd; }
+  .prompt { color: #56b6c2; }
+  .tool-exec { color: #e5c07b; }
+  .response { color: #4ec94e; }
+</style>
+</head>
+<body>
+<pre><span class="prompt">s07 &gt;&gt; Complete task 1 and then list tasks to see task 2 unblocked</span>
+
+<span class="separator">────────────────── 用户输入 ──────────────────</span>
+query = &quot;Complete task 1 and then list tasks to see task 2 unblocked&quot;
+
+<span class="separator">────────────────── 轮次 1 ──────────────────</span>
+<span class="dim">messages = [
+  ...（example1 + example2 的全部 10 条消息）
+  [10] user: &quot;Complete task 1 and then list tasks to see task 2 unblocked&quot;
+]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 1: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;Completing task 1 first!&quot;</span>
+<span class="response">  ToolUseBlock: name=&quot;task_update&quot;, id=&quot;toolu_01SVrKdLrugfuvYhF4Y3WNCn&quot;</span>
+<span class="response">    input={&quot;task_id&quot;: 1, &quot;status&quot;: &quot;completed&quot;}</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 1: 执行工具 ──────────────────</span>
+  <span class="yellow">→ task_1 完成，解锁了: [2]</span>
+  <span class="green">task_1: pending → completed</span>
+<span class="yellow">执行: task_update({&quot;task_id&quot;: 1, &quot;status&quot;: &quot;completed&quot;})</span>
+<span class="dim">输出 (123 字符): {
+  &quot;id&quot;: 1,
+  &quot;subject&quot;: &quot;Setup project&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;blockedBy&quot;: [],
+  &quot;owner&quot;: &quot;&quot;
+}</span>
+
+<span class="dim">.tasks/ 目录状态：
+  task_1.json: [x] #1 &quot;Setup project&quot;
+  task_2.json: [ ] #2 &quot;Write code&quot;
+  task_3.json: [ ] #3 &quot;Write tests&quot; blockedBy=[2]</span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── 轮次 2 ──────────────────</span>
+<span class="dim">messages = [
+  ...
+  [11] assistant: [TextBlock + ToolUseBlock(task_update task_1 completed)]
+  [12] user: [tool_result: task_1 completed JSON]
+]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 2: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;tool_use&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;Task 1 is done! Now let&apos;s list all tasks to see the updated state.&quot;</span>
+<span class="response">  ToolUseBlock: name=&quot;task_list&quot;, id=&quot;toolu_018CbHMdb9VyVaiJ2PaeMhAJ&quot;</span>
+<span class="response">    input={}</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 2: 执行工具 ──────────────────</span>
+<span class="yellow">执行: task_list({})</span>
+<span class="dim">输出 (78 字符): [x] #1: Setup project
+[ ] #2: Write code
+[ ] #3: Write tests (blocked by: [2])</span>
+
+<span class="dim">.tasks/ 目录状态：
+  task_1.json: [x] #1 &quot;Setup project&quot;
+  task_2.json: [ ] #2 &quot;Write code&quot;
+  task_3.json: [ ] #3 &quot;Write tests&quot; blockedBy=[2]</span>
+
+<span class="cyan">→ tool_result 已塞回 messages，继续下一轮...</span>
+
+<span class="separator">────────────────── 轮次 3 ──────────────────</span>
+<span class="dim">messages = [
+  ...
+  [13] assistant: [TextBlock + ToolUseBlock(task_list)]
+  [14] user: [tool_result: 78 字符 list]
+]</span>
+
+<span class="cyan">→ 调用 client.messages.create(...)</span>
+
+<span class="separator">────────────────── 轮次 3: 回复 ──────────────────</span>
+<span class="response">response.stop_reason = &quot;end_turn&quot;</span>
+<span class="response">response.content = [</span>
+<span class="response">  TextBlock: &quot;Here&apos;s the updated state:
+
+| ID | Task | Status | Blocked By |
+|----|------|--------|------------|
+| 1 | Setup project | ✅ Completed | — |
+| 2 | Write code | ⬜ Pending | ~~#1~~ *(unblocked!)* |
+| 3 | Write tests | ⬜ Pending | #2 |
+
+**#2 Write code** is now unblocked and ready to start! Task 3 is still waiting on Task 2 to be completed.&quot;</span>
+<span class="response">]</span>
+
+<span class="separator">────────────────── 轮次 3: 循环结束 ──────────────────</span>
+<span class="bold">stop_reason = &quot;end_turn&quot; → return!</span>
+
+<span class="separator">────────────────── 最终回答 ──────────────────</span>
+Here&apos;s the updated state:
+
+| ID | Task | Status | Blocked By |
+|----|------|--------|------------|
+| 1 | Setup project | <span class="green">✅ Completed</span> | — |
+| 2 | Write code | ⬜ Pending | <span class="dim">~~#1~~</span> <span class="bold">*(unblocked!)*</span> |
+| 3 | Write tests | ⬜ Pending | #2 |
+
+<span class="bold">#2 Write code</span> is now unblocked and ready to start! Task 3 is still waiting on Task 2 to be completed.
+
+<span class="prompt">s07 &gt;&gt;</span></pre>
+</body>
+</html>
